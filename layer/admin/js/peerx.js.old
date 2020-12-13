@@ -1,0 +1,43 @@
+//peers.js
+
+angular.module('PeerX', [])
+    .factory('PeerService', ['$http', function ($http) {
+        console.log("starting PeerService")
+        return {
+            getMe: function () {
+                return $http.get('/api/me');
+            },
+            getList: function () {
+                console.log("Calling Peer API");
+                return $http.get('/api/peers');
+            },
+            getServices: function () {
+                console.log("Calling Service API");
+                return $http.get('/api/services');
+            }
+        }
+    }])
+    .controller('PeerCtrl', ['PeerService', function (PeerService) {
+        var self = this;
+        PeerService.getMe().then(
+            function (response) {
+                self.me = response.data;
+            },
+            function (errResponse) {
+                self.me = ["Error"];
+            });
+        PeerService.getList().then(
+            function (response) {
+                self.peers = response.data;
+            },
+            function (errResponse) {
+                self.peers = ["Error"];
+            });
+        PeerService.getServices().then(
+            function (response) {
+                self.services = response.data;
+            },
+            function (errResponse) {
+                self.services = ["Error"];
+            });
+    }]);
