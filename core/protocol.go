@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package layer
+package core
 
 import (
 	"encoding/gob"

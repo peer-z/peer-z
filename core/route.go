@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package layer
+package core
 
-var webService = Service{
-	Info: ServiceInfo{
-		Name:        "WebServer",
-		Id:          webServiceID,
-		Version:     0x0100, // version 1.00
-		address:     webServiceAddress,
-		Description: "A basic www server like service to share your projects, businesses and more",
-		flags:       0,
-	},
+type Route struct {
+	address Address
+	gateway Peer
+	distance Distance
 }
-

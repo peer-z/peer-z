@@ -17,12 +17,12 @@
 package main
 
 import (
-	layer "./layer"
+	"github.com/peer-z/peer-z/core"
 	"fmt"
 )
 
 func main() {
-	fmt.Println(layer.Me.Address())
-	fmt.Println(layer.Me)
-	layer.Start()
+	fmt.Println(core.Me.Address())
+	fmt.Println(core.Me)
+	core.Start()
 }

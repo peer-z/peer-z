@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package layer
+package core
 
-import (
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"log"
-)
+var chatService = Service{
+	Info: ServiceInfo{
+		Name:        "Chat",
+		Id:          chatServiceID,
+		Version:     0x0100, // version 1.00
+		address:     chatServiceAddress,
+		Description: "A basic realtime messaging service for people to chat",
+		flags:       0,
+	},
+	init: initChat,
+}
 
-var db *gorm.DB
-
-func initDatabase() {
-	var err error
-	db, err = gorm.Open(sqlite.Open(baseDir+"/peer-z.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Can't connect to DB")
-	}
-	db.AutoMigrate(&Peer{})
+func initChat() {
+	Logln("Chat started")
 }

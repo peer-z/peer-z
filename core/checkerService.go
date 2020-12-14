@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package layer
+package core
 
-var chatService = Service{
+
+
+var checkerService = Service{
 	Info: ServiceInfo{
-		Name:        "Chat",
-		Id:          chatServiceID,
+		Name:        "Checkers",
+		Id:          checkerServiceID,
 		Version:     0x0100, // version 1.00
-		address:     chatServiceAddress,
-		Description: "A basic realtime messaging service for people to chat",
+		address:     checkerServiceAddress,
+		Description: "A basic checker game",
 		flags:       0,
 	},
-	init: initChat,
 }
 
-func initChat() {
-	Logln("Chat started")
-}

@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package layer
+package core
 
-
-
-var checkerService = Service{
+var storageService = Service{
 	Info: ServiceInfo{
-		Name:        "Checkers",
-		Id:          checkerServiceID,
+		Name:        "Storage",
+		Id:          storageServiceID,
 		Version:     0x0100, // version 1.00
-		address:     checkerServiceAddress,
-		Description: "A basic checker game",
+		address:     storageServiceAddress,
+		Description: "A basic storage service to distribute data among peers",
 		flags:       0,
 	},
 }
-

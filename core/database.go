@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package layer
+package core
 
-var storageService = Service{
-	Info: ServiceInfo{
-		Name:        "Storage",
-		Id:          storageServiceID,
-		Version:     0x0100, // version 1.00
-		address:     storageServiceAddress,
-		Description: "A basic storage service to distribute data among peers",
-		flags:       0,
-	},
+import (
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"log"
+)
+
+var db *gorm.DB
+
+func initDatabase() {
+	var err error
+	db, err = gorm.Open(sqlite.Open(baseDir+"/peer-z.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Can't connect to DB")
+	}
+	db.AutoMigrate(&Peer{})
 }

@@ -13,7 +13,7 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-layer/admin/node_modules/**
+core/admin/node_modules/**
 
 # IDE
 .idea/**
