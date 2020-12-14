@@ -1,15 +1,11 @@
-# 🚀 Welcome to your new awesome project!
+# Peer-Z Core
 
-This project has been created using **webpack scaffold**, you can now run
+## Purpose
 
-```
-npm run build
-```
+This project's purpose is to install a peer-to-peer layer that will allow people to communicate securely and anonymously over the Internet. It will offer based services, like mail-like and instant messaging, profile and personal web servers, along with a game of checkers and one of chess - for a start.
 
-or
+The Core layer will be expandable through new services that can be developed and implemented separately, and authorized through the core.
 
-```
-yarn build
-```
+## Next Steps
 
-to bundle your application
+This README will be updated in time.
