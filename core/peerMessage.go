@@ -44,19 +44,21 @@ const (
 
 type Content []byte
 
+var messageIdCounter uint64
+
 type peerMessage struct {
-	id          uint64
-	version     uint16
-	source      PeerInfo
-	destination Address
-	msgType     int
-	ref         uint64
-	content     Content
-	size        uint64
-	flags       uint32
-	ttl         int
-	counter     int
-	signature   []byte
+	Id          uint64
+	Version     uint16
+	Source      PeerInfo
+	Destination PeerInfo
+	MsgType     int
+	Ref         uint64
+	Content     Content
+	Size        uint64
+	Flags       uint32
+	Ttl         int
+	Counter     int
+	Signature   []byte
 }
 
 //type MessageMarshaler interface {
@@ -68,21 +70,28 @@ type peerMessage struct {
 //}
 
 func (message peerMessage) send() error {
-	nextHop, err := message.getNextHop()
-	if err == nil {
-		messagesOut <- peerData{
-			peer:    nextHop.Info(),
-			message: message,
+	var nextHopInfo PeerInfo
+	if len(message.Destination.IP)>0 {
+		nextHopInfo =message.Destination
+	} else {
+		nextHop, err := message.getNextHop()
+		if err == nil {
+			nextHopInfo = nextHop.Info()
+		} else {
+			return err
 		}
-		return nil
 	}
-	return err
+	messagesOut <- peerData{
+		Peer:    nextHopInfo,
+		Message: message,
+	}
+	return nil
 }
 
 func (message *peerMessage) route() error {
-	message.ttl--
-	message.counter++
-	if message.ttl > 0 {
+	message.Ttl--
+	message.Counter++
+	if message.Ttl > 0 {
 		return message.send()
 	}
 	return errors.New(TTL_EXPIRED)
@@ -91,9 +100,16 @@ func (message *peerMessage) route() error {
 func (message *peerMessage) getNextHop() (Peer, error) {
 	var distance Distance = DistMax
 	var nextHop Peer
+	if message.Destination.Address.isBroadcast() {
+		return *Me.peers.searchByAddress(message.Destination.Address), nil
+	}
 	for _, peer := range Me.peers {
-		d := message.destination.Distance(peer.address)
-		if d < distance && (peer.address != message.destination || message.counter >= MIN_HOPS) {
+		if peer.address == message.Destination.Address && message.Counter == -1 {
+			// direct message to a peer
+			return peer, nil
+		}
+		d := message.Destination.Address.Distance(peer.address)
+		if d < distance && (peer.address != message.Destination.Address || message.Counter >= MIN_HOPS) {
 			distance = d
 			nextHop = peer
 		}
@@ -111,11 +127,11 @@ func (message *peerMessage) nak(destination Address) (*peerMessage, error) {
 
 func (message *peerMessage) encrypt(destination Address, key Key) (*peerMessage, error) {
 	var err error
-	message.signature, err = message.content.sign()
+	message.Signature, err = message.Content.sign()
 	if err != nil {
 		return nil, err
 	}
-	message.content, err = message.content.encrypt(key, []byte("MSG"))
+	message.Content, err = message.Content.encrypt(key, []byte("MSG"))
 	if err != nil {
 		return nil, err
 	}
@@ -123,12 +139,12 @@ func (message *peerMessage) encrypt(destination Address, key Key) (*peerMessage,
 }
 
 func (message peerMessage) setMsgType(command int) peerMessage {
-	message.msgType = command
+	message.MsgType = command
 	return message
 }
 
 func (message peerMessage) setRef(messageId uint64) peerMessage {
-	message.ref = messageId
+	message.Ref = messageId
 	return message
 }
 
@@ -138,6 +154,6 @@ func (message peerMessage) setStateInfo(reason string) peerMessage {
 }
 
 func (message peerMessage) setContent(content []byte) peerMessage {
-	message.content = content
+	message.Content = content
 	return message
 }

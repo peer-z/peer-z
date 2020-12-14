@@ -17,6 +17,7 @@
 package core
 
 import (
+	"bytes"
 	"encoding/gob"
 	"errors"
 	"fmt"
@@ -66,12 +67,12 @@ func init() {
 
 // RequestPeering Starts a peering request with peer
 func RequestPeering(peer *Peer) error {
-	message := &peerMessage{
-		msgType: CMD_PR,
-		source:  Me.Info(),
+	message := peerMessage{
+		MsgType: CMD_PR,
+		Source:  Me.Info(),
+		Counter: -1,
 	}
-	err := peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Failed Peering Request", err)
 		return err
 	}
@@ -81,12 +82,12 @@ func RequestPeering(peer *Peer) error {
 
 // accept the peering request
 func acceptPeering(peer *Peer, messageId uint64) error {
-	message := &peerMessage{
-		msgType: CMD_PR_ACK,
-		source:  Me.Info(),
+	message := peerMessage{
+		MsgType: CMD_PR_ACK,
+		Source:  Me.Info(),
+		Counter: -1,
 	}
-	err := peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Peering Acceptation Failed", err)
 		return err
 	}
@@ -98,14 +99,14 @@ func acceptPeering(peer *Peer, messageId uint64) error {
 
 // refuse the peering request with reason
 func refusePeering(peer *Peer, messageId uint64, reason string) error {
-	message := &peerMessage{
-		msgType: CMD_PR_NAK,
-		ref:     messageId,
-		source:  Me.Info(),
-		content: []byte(reason),
+	message := peerMessage{
+		MsgType: CMD_PR_NAK,
+		Ref:     messageId,
+		Source:  Me.Info(),
+		Content: []byte(reason),
+		Counter: -1,
 	}
-	err := peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Peering Refusal Failed", err)
 		return err
 	}
@@ -121,19 +122,21 @@ func sendPeerList(peer *Peer, messageId uint64, peers Peers, reply bool) error {
 	if reply {
 		command = CMD_PL_ACK
 	}
-	content, err := binary.Marshal(peers)
-	if err != nil {
-		Logln("Error sending PeerList", err)
+	buffer := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buffer)
+	if err := encoder.Encode(peers); err != nil {
 		return err
 	}
-	message := &peerMessage{
-		msgType: command,
-		ref:     messageId,
-		source:  Me.Info(),
-		content: content,
+	content := buffer.Bytes()
+
+	message := peerMessage{
+		MsgType: command,
+		Ref:     messageId,
+		Source:  Me.Info(),
+		Content: content,
+		Counter: -1,
 	}
-	err = peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Error sending PeerList", err)
 		return err
 	}
@@ -149,19 +152,20 @@ func sendPeerList(peer *Peer, messageId uint64, peers Peers, reply bool) error {
 
 // sends the rerouting proposal
 func sendRerouteProposal(peer *Peer, messageId uint64, rerouteList *RerouteList) error {
-	content, err := binary.Marshal(rerouteList)
-	if err != nil {
-		Logln("Error sending RerouteList", err)
+	buffer := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buffer)
+	if err := encoder.Encode(rerouteList); err != nil {
 		return err
 	}
-	message := &peerMessage{
-		msgType: CMD_RP,
-		ref:     messageId,
-		source:  Me.Info(),
-		content: content,
+	content := buffer.Bytes()
+	message := peerMessage{
+		MsgType: CMD_RP,
+		Ref:     messageId,
+		Source:  Me.Info(),
+		Content: content,
+		Counter: -1,
 	}
-	err = peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Error sending RerouteList", err)
 		return err
 	}
@@ -172,12 +176,12 @@ func sendRerouteProposal(peer *Peer, messageId uint64, rerouteList *RerouteList)
 
 // accept the rerouting proposal
 func acceptRerouting(peer *Peer, messageId uint64) error {
-	message := &peerMessage{
-		msgType: CMD_RP_ACK,
-		source:  Me.Info(),
+	message := peerMessage{
+		MsgType: CMD_RP_ACK,
+		Source:  Me.Info(),
+		Counter: -1,
 	}
-	err := peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Rerouting Acceptation Failed", err)
 		return err
 	}
@@ -189,13 +193,13 @@ func acceptRerouting(peer *Peer, messageId uint64) error {
 
 // accept the rerouting proposal
 func refuseRerouting(peer *Peer, messageId uint64, reason string) error {
-	message := &peerMessage{
-		msgType: CMD_RP_NAK,
-		source:  Me.Info(),
-		content: []byte(reason),
+	message := peerMessage{
+		MsgType: CMD_RP_NAK,
+		Source:  Me.Info(),
+		Content: []byte(reason),
+		Counter: -1,
 	}
-	err := peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Rerouting refusal failed", err)
 		return err
 	}
@@ -207,12 +211,12 @@ func refuseRerouting(peer *Peer, messageId uint64, reason string) error {
 
 // protocol finished, confirm connection
 func confirmPeering(peer *Peer, messageId uint64) error {
-	message := &peerMessage{
-		msgType: CMD_PR_OK,
-		source:  Me.Info(),
+	message := peerMessage{
+		MsgType: CMD_PR_OK,
+		Source:  Me.Info(),
+		Counter: -1,
 	}
-	err := peer.send(message)
-	if err != nil {
+	if err := peer.send(message); err != nil {
 		Logln("Peering confirmation failed", err)
 		return err
 	}
@@ -230,22 +234,26 @@ func confirmPeering(peer *Peer, messageId uint64) error {
 // 	these calls can be chained
 //
 
-func (message peerMessage) setPeerList(peerList PeerList) (peerMessage, error) {
-	content, err := binary.Marshal(peerList)
-	if err != nil {
-		return message, err
+func (message peerMessage) setPeerList(peerList PeerList) error {
+	buffer := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buffer)
+	if err := encoder.Encode(peerList); err != nil {
+		return err
 	}
+	content := buffer.Bytes()
 	message.setContent(content)
-	return message, nil
+	return nil
 }
 
-func (message peerMessage) setRerouteList(rerouteList RerouteList) (peerMessage, error) {
-	content, err := binary.Marshal(rerouteList)
-	if err != nil {
-		return message, err
+func (message peerMessage) setRerouteList(rerouteList RerouteList) error {
+	buffer := new(bytes.Buffer)
+	encoder := gob.NewEncoder(buffer)
+	if err := encoder.Encode(rerouteList); err != nil {
+		return err
 	}
+	content := buffer.Bytes()
 	message.setContent(content)
-	return message, nil
+	return nil
 }
 
 //
@@ -293,7 +301,7 @@ func (message *peerMessage) decode(decoder *gob.Decoder) {
 //
 
 func (message *peerMessage) handle() error {
-	Logf("MessageId: %d\nCommand: %d\n", message.id, message.msgType)
+	Logf("MessageId: %d\nCommand: %d\n", message.Id, message.MsgType)
 
 	protocolFunctions := map[int]func(*peerMessage) error{
 		CMD_PR:     handlePR,
@@ -307,7 +315,7 @@ func (message *peerMessage) handle() error {
 		CMD_PR_OK:  finishPR,
 	}
 
-	if function, ok := protocolFunctions[message.msgType]; ok {
+	if function, ok := protocolFunctions[message.MsgType]; ok {
 		return function(message)
 	}
 	Logln("Protocol command not currently supported.")
@@ -316,10 +324,10 @@ func (message *peerMessage) handle() error {
 
 // received a PR, handle it
 func handlePR(message *peerMessage) error {
-	source := message.source
-	Logf("Peering Request from: %s\n", message.source)
+	source := message.Source
+	Logf("Peering Request from: %s\n", message.Source)
 
-	messageId := message.id
+	messageId := message.Id
 	peer := Me.peers.searchByInfo(source)
 	if peer == nil {
 		peer = NewPeer(source.Name, source.Address, source.IP, source.Port)
@@ -327,6 +335,7 @@ func handlePR(message *peerMessage) error {
 			refusePeering(peer, messageId, err.Error())
 			return err
 		}
+		peer.ip = message.Destination.IP
 	} else {
 		Logln("Peer found:", peer)
 	}
@@ -336,9 +345,9 @@ func handlePR(message *peerMessage) error {
 
 // received a PR cancellation
 func cancelPR(message *peerMessage) error {
-	Logf("Peering Request refused by: %v\nReason:%s\n", message.source, string(message.content))
+	Logf("Peering Request refused by: %v\nReason:%s\n", message.Source, string(message.Content))
 
-	peer := Me.peers.searchByInfo(message.source)
+	peer := Me.peers.searchByInfo(message.Source)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
@@ -346,7 +355,7 @@ func cancelPR(message *peerMessage) error {
 	}
 	peer.
 		SetState(STATE_PR_REFUSED).
-		SetStateInfo(string(message.content))
+		SetStateInfo(string(message.Content))
 	return nil
 }
 
@@ -354,10 +363,10 @@ func cancelPR(message *peerMessage) error {
 func sendPL(message *peerMessage) error {
 	// search by IP since we don't know the peer address
 	// at this point
-	source := message.source
-	Logf("Peering Request accepted by: %s\n", message.source)
+	source := message.Source
+	Logf("Peering Request accepted by: %s\n", message.Source)
 
-	peer := Me.peers.searchByInfo(source)
+	peer := Me.peers.searchByAddress(source.Address)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
@@ -367,23 +376,23 @@ func sendPL(message *peerMessage) error {
 	peer.SetAddress(source.Address)
 	Logln("Updated peer:", peer)
 	peers := Me.GetList()
-	sendPeerList(peer, message.id, peers, false)
+	sendPeerList(peer, message.Id, peers, false)
 	return nil
 }
 
 // received a PL, send ours
 func handlePL(message *peerMessage) error {
-	Logf("PeerList Received from: %v\n", message.source)
+	Logf("PeerList Received from: %v\n", message.Source)
 
-	peer := Me.peers.searchByInfo(message.source)
+	peer := Me.peers.searchByInfo(message.Source)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
 		return errors.New("Peer disappeared")
 	}
 	var peers Peers
-	err := binary.Unmarshal(message.content, peers)
-	if err!=nil {
+	err := binary.Unmarshal(message.Content, peers)
+	if err != nil {
 		Logln("Failed decoding peer list")
 		return errors.New("Failed decoding peer list")
 	}
@@ -392,22 +401,22 @@ func handlePL(message *peerMessage) error {
 	peer.peers = peers
 	// get and send mine
 	ourList := Me.GetList()
-	sendPeerList(peer, message.id, ourList, true)
+	sendPeerList(peer, message.Id, ourList, true)
 	return nil
 }
 
 // received a PL reply, calculcate and send re-routing proposal
 func sendRP(message *peerMessage) error {
-	Logf("PeerList Replied by: %s\n", message.source)
-	peer := Me.peers.searchByInfo(message.source)
+	Logf("PeerList Replied by: %s\n", message.Source)
+	peer := Me.peers.searchByInfo(message.Source)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
 		return errors.New("Peer disappeared")
 	}
 	var peers Peers
-	err := binary.Unmarshal(message.content,peers)
-	if err!=nil {
+	err := binary.Unmarshal(message.Content, peers)
+	if err != nil {
 		Logln("Failed decoding peer list")
 		return errors.New("Failed decoding peer list")
 	}
@@ -415,21 +424,21 @@ func sendRP(message *peerMessage) error {
 	peer.peers = peers
 	rerouteList := Me.CheckList(peer)
 	Logln("Sending RP:", rerouteList)
-	sendRerouteProposal(peer, message.id, rerouteList)
+	sendRerouteProposal(peer, message.Id, rerouteList)
 	return nil
 }
 
 // receive a rerouting proposal, confirm or refuse
 func handleRP(message *peerMessage) error {
-	Logf("Rerouting List Replied by: %s\n", message.source)
-	peer := Me.peers.searchByInfo(message.source)
+	Logf("Rerouting List Replied by: %s\n", message.Source)
+	peer := Me.peers.searchByInfo(message.Source)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
 		return errors.New("Peer disappeared")
 	}
 	var rerouteList RerouteList
-	err := binary.Unmarshal(message.content,rerouteList)
+	err := binary.Unmarshal(message.Content, rerouteList)
 	if err != nil {
 		Logln("Failed decoding reroute list")
 		return errors.New("Failed decoding reroute list")
@@ -443,56 +452,56 @@ func handleRP(message *peerMessage) error {
 	myRerouteList := Me.CheckList(peer)
 	for i, gimmePeer := range *rerouteList.Gimme {
 		getPeer := (*myRerouteList.Get)[i]
-		if reflect.DeepEqual(gimmePeer,getPeer) {
+		if reflect.DeepEqual(gimmePeer, getPeer) {
 			err := errors.New("Proposals don't match")
 			Logln(err, gimmePeer)
-			refuseRerouting(peer, message.id, err.Error())
+			refuseRerouting(peer, message.Id, err.Error())
 			return err
 		}
 	}
 	for i, getPeer := range *rerouteList.Get {
 		gimmePeer := (*myRerouteList.Get)[i]
-		if reflect.DeepEqual(getPeer,gimmePeer) {
+		if reflect.DeepEqual(getPeer, gimmePeer) {
 			err := errors.New("Proposals don't match")
 			Logln(err, getPeer)
-			refuseRerouting(peer, message.id, err.Error())
+			refuseRerouting(peer, message.Id, err.Error())
 			return err
 		}
 	}
 	peer.rerouteList = &rerouteList
 	Logln("Proposals match.")
-	acceptRerouting(peer, message.id)
+	acceptRerouting(peer, message.Id)
 	return nil
 }
 
 func requestRRs(message *peerMessage) error {
-	Logf("Rerouting Protocol accepted by: %s\n", message.source)
-	peer := Me.peers.searchByInfo(message.source)
+	Logf("Rerouting Protocol accepted by: %s\n", message.Source)
+	peer := Me.peers.searchByInfo(message.Source)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
 		return errors.New("Peer disappeared")
 	}
-	confirmPeering(peer, message.id)
+	confirmPeering(peer, message.Id)
 	return nil
 }
 
 func concludePR(message *peerMessage) error {
-	Logf("Rerouting Protocol refused by: %s\n", message.source)
-	peer := Me.peers.searchByInfo(message.source)
+	Logf("Rerouting Protocol refused by: %s\n", message.Source)
+	peer := Me.peers.searchByInfo(message.Source)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
 		return errors.New("Peer disappeared")
 	}
-	confirmPeering(peer, message.id)
+	confirmPeering(peer, message.Id)
 
 	return nil
 }
 
 func finishPR(message *peerMessage) error {
-	Logf("Peering confirmed by: %s\n", message.source)
-	peer := Me.peers.searchByInfo(message.source)
+	Logf("Peering confirmed by: %s\n", message.Source)
+	peer := Me.peers.searchByInfo(message.Source)
 	if peer == nil {
 		// contact not found... discard
 		Logln("Can't find contact anymore... Weird!")
@@ -506,6 +515,5 @@ func finishPR(message *peerMessage) error {
 
 // properly display a contact
 func (peerInfo PeerInfo) String() string {
-	return fmt.Sprintf("%s [%s] (%s:%d)",peerInfo.Name,peerInfo.Address,peerInfo.IP,peerInfo.Port)
+	return fmt.Sprintf("%s [%s] (%s:%d)", peerInfo.Name, peerInfo.Address, peerInfo.IP, peerInfo.Port)
 }
-

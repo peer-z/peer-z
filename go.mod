@@ -1,4 +1,4 @@
-module github.com/peer-z/core
+module github.com/peer-z/peer-z
 
 go 1.15
 

@@ -120,9 +120,9 @@ func (state State) String() string {
 }
 
 //send a protocol message to peer
-func (peer Peer) send(message *peerMessage) error {
-	message.destination = peer.address
-	Logln("Messaging",peer,"with",message)
+func (peer Peer) send(message peerMessage) error {
+	message.Destination = peer.Info()
+	Logln("Messaging", peer, "with", message)
 	return message.send()
 }
 
@@ -199,6 +199,10 @@ func (peerInfo PeerInfo) getConnectionString() string {
 	return net.JoinHostPort(peerInfo.IP, strconv.Itoa(peerInfo.Port))
 }
 
+func (peer Peer) adminUrl() string {
+	return "http://127.0.0.1:" + strconv.Itoa(*mgmtPort)
+}
+
 //
 // --- peer lists
 //
@@ -210,6 +214,15 @@ func (peer Peer) GetList() Peers {
 func (peers Peers) searchByInfo(info PeerInfo) *Peer {
 	for _, peer := range peers {
 		if peer.ip == info.IP && peer.address == info.Address {
+			return &peer
+		}
+	}
+	return nil
+}
+
+func (peers Peers) searchByAddress(address Address) *Peer {
+	for _, peer := range peers {
+		if peer.address == address {
 			return &peer
 		}
 	}
@@ -381,8 +394,11 @@ func (infos PeerInfos) ApiPeerInfos() (apiPeerInfos []ApiPeerInfo) {
 	return apiPeerInfos
 }
 
-func (peers Peers) String() string {
-	return fmt.Sprint(peers)
+func (peers Peers) String() (output string) {
+	for _, peer := range peers {
+		output += fmt.Sprintf("%s\n", peer)
+	}
+	return output
 }
 
 func equal(peer, peer2 Peer) bool {

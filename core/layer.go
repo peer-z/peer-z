@@ -20,6 +20,7 @@ import (
 	"flag"
 	"gitlab.com/NebulousLabs/go-upnp"
 	"log"
+	"math/rand"
 	"os"
 	"os/exec"
 	"strings"
@@ -59,6 +60,8 @@ var baseDir string
 //
 
 func init() {
+	messageIdCounter = uint64(rand.Int63())
+
 	flag.Parse()
 
 	if *relay {
@@ -105,7 +108,13 @@ func init() {
 		log.Fatal(err)
 	}
 
-	Me = NewPeer("me", generateAddress(), externalIP, *peerPort)
+	address := generateAddress()
+
+	if *relay {
+		address = BroadcastAddress
+	}
+
+	Me = NewPeer("me", address, externalIP, *peerPort)
 	//GeneratePeers()
 }
 
@@ -114,8 +123,9 @@ func init() {
 //
 
 func Start() error {
+	Me.addPeer(*NewPeer("relay", BroadcastAddress, "127.0.0.1", 33200))
 	go adminServer()
-	cmd := exec.Command("open", "http://127.0.0.1:33300")
+	cmd := exec.Command("open", Me.adminUrl())
 	cmd.Run()
 	Logln("Listening to peers.")
 	Listen()

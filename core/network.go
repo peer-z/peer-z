@@ -20,16 +20,18 @@ import (
 	"bytes"
 	"encoding/gob"
 	"errors"
+	"fmt"
 	upnp "gitlab.com/NebulousLabs/go-upnp"
 	"io"
 	"log"
 	"net"
+	"strings"
 )
 
 const (
 	MAGIC_NUMBER = 0x0368
-	RELAY_IP = "127.0.0.1"
-	RELAY_PORT = 33200
+	RELAY_IP     = "127.0.0.1"
+	RELAY_PORT   = 33200
 )
 
 type netData struct {
@@ -38,8 +40,8 @@ type netData struct {
 }
 
 type peerData struct {
-	peer    PeerInfo
-	message peerMessage
+	Peer    PeerInfo
+	Message peerMessage
 }
 
 var externalIP string
@@ -81,11 +83,13 @@ func Listen() {
 		go messageSender()
 	}
 	Me.SetState(STATE_READY)
-	RequestPeering(&Peer{
-		address: Address{1, 1, 1, 1},
-		ip:      RELAY_IP,
-		port:    RELAY_PORT,
-	})
+	if Me.address != BroadcastAddress {
+		RequestPeering(&Peer{
+			address: BroadcastAddress,
+			ip:      RELAY_IP,
+			port:    RELAY_PORT,
+		})
+	}
 	for {
 		buffer := make([]byte, 4096)
 		count, addr, err := conn.ReadFromUDP(buffer)
@@ -109,9 +113,10 @@ func (peer Peer) MarshalPeerData(writer io.Writer, message peerMessage) error {
 	if err := encoder.Encode(MAGIC_NUMBER); err != nil {
 		return err
 	}
-	peerData := &peerData{
-		peer:    peer.Info(),
-		message: message,
+
+	peerData := peerData{
+		Peer:    peer.Info(),
+		Message: message,
 	}
 
 	return encoder.Encode(peerData)
@@ -130,37 +135,49 @@ func UnmarshalPeerData(reader io.Reader) (*peerMessage, *PeerInfo, error) {
 	if err := decoder.Decode(&peerData); err != nil {
 		return nil, nil, err
 	}
-	return &peerData.message, &peerData.peer, nil
+	return &peerData.Message, &peerData.Peer, nil
 }
 
 func messageHandler() {
 	for {
 		select {
 		case netMessage := <-messagesIn:
+			fmt.Println("Message from",netMessage.addr)
 			buffer := bytes.NewBuffer(netMessage.data)
 			var message *peerMessage
 			var peer *PeerInfo
 			var err error
+
 			if message, peer, err = UnmarshalPeerData(buffer); err != nil {
-				Logln(err)
+				Logln("error: ", err)
 				continue
 			}
-			Logln("Receiving from", message.source, "delivered by", *peer)
-			if message.destination != Me.address {
+			Logln("Receiving msg type", message.MsgType, "from", message.Source, "delivered by", *peer)
+
+			if message.Destination.Address != Me.address {
+				Logln("Routing message...")
 				message.route()
-				break
+				continue
 			}
-			if message.flags&MSG_ACK_REQUEST > 0 {
+
+			realDestinationIP := strings.Split(netMessage.addr.String(),":")[0]
+
+			if message.Flags&MSG_ACK_REQUEST > 0 {
 				reply := message
-				reply.flags &= ^MSG_ACK_REQUEST
-				reply.flags |= MSG_ACK
-				reply.content = []byte{}
-				reply.size = 0
-				reply.source = Me.Info()
-				reply.destination = message.source.Address
-				reply.ttl = MAX_TTL
-				reply.counter = 0
+				reply.Flags &= ^MSG_ACK_REQUEST
+				reply.Flags |= MSG_ACK
+				reply.Content = []byte{}
+				reply.Size = 0
+				reply.Source = Me.Info()
+				reply.Destination = message.Source
+				reply.Destination.IP = realDestinationIP
+				reply.Ttl = MAX_TTL
+				reply.Counter = 0
 				reply.send()
+				Logln("Acked message...")
+			}
+			if err = message.handle(); err != nil {
+				Logln("Can't handle message:", err)
 			}
 		}
 	}
@@ -182,7 +199,9 @@ func messageSender() {
 	for {
 		select {
 		case peerData := <-messagesOut:
-			peer := peerData.peer
+			peer := peerData.Peer
+			peerData.Message.Id = messageIdCounter
+
 			connString := peer.getConnectionString()
 			udpAddr, err := net.ResolveUDPAddr("udp", connString)
 			if err != nil {
@@ -196,22 +215,44 @@ func messageSender() {
 				continue
 			}
 			var count int
-			buf := make([]byte, 4096)
+			//buf := make([]byte, 4096)
+			//buffer := bytes.NewBuffer(buf)
 
-			buffer := bytes.NewBuffer(buf)
+			buf := new(bytes.Buffer)
 
-			if err := Me.MarshalPeerData(buffer, peerData.message); err != nil {
-				Logln("Can't marshall message")
+			if err := Me.MarshalPeerData(buf, peerData.Message); err != nil {
+				Logln("Can't marshall message: ", err)
 				_ = conn.Close()
 				continue
 			}
-			count, err = conn.Write(buf)
+
+			count, err = conn.Write(buf.Bytes())
 			if err != nil {
 				Logln("Can't write to peer", peer)
 				_ = conn.Close()
 				continue
 			}
-			Logln("Send", count, "bytes...")
+			Logln("Sent", count, "bytes...")
 		}
 	}
+}
+
+func dump(buffer []byte, count int) (output string) {
+	output = "\n"
+	for pos := 0; pos < count; pos += 16 {
+		data := ""
+		var i int
+		for i = 0; i < 16; i++ {
+			if pos+i >= count {
+				break
+			}
+			output += fmt.Sprintf("%02x ", buffer[pos+i])
+			fmt.Sprintf(data, "%s%c", buffer[i])
+		}
+		for j := i; j < 16; j++ {
+			fmt.Sprintf(data, "   ")
+		}
+		output += fmt.Sprintf("%s\n", data)
+	}
+	return output
 }

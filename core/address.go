@@ -17,8 +17,9 @@
 package core
 
 import (
+	"crypto/rand"
 	"fmt"
-	"math/rand"
+	"log"
 )
 
 const (
@@ -75,6 +76,10 @@ func Abs(x int16) int16 {
 	return x
 }
 
+func (address Address) isBroadcast() bool {
+	return address == BroadcastAddress
+}
+
 //
 // --- Utils
 //
@@ -82,7 +87,14 @@ func Abs(x int16) int16 {
 func generateAddress() (address Address) {
 	for i := range address {
 		for ; address[i] == 0 || address[i] == 65535; {
-			address[i] = uint16(rand.Uint32())
+			addr := make([]byte, 2)
+			for ; uint16(addr[0])<<8+uint16(addr[1]) == 0 ||
+							uint16(addr[0])<<8+uint16(addr[1]) == 65535; {
+				if _, err := rand.Read(addr); err != nil {
+					log.Fatal("Can't generate address")
+				}
+			}
+			address[i] = uint16(addr[0])<<8 + uint16(addr[1])
 		}
 	}
 	return address
@@ -97,8 +109,8 @@ func (address Address) String() (value string) {
 		if i > 0 {
 			value += ":"
 		}
-		if a!=0 {
-			value += fmt.Sprintf("%4x", a)
+		if a != 0 {
+			value += fmt.Sprintf("%x", a)
 		}
 	}
 	return value

@@ -36,10 +36,10 @@ var serviceHandlers ServiceHandlers
 
 func adminServer() {
 	http.HandleFunc("/", serverHandler)
-	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("layer/admin/dist"))))
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("layer/admin/dist"))))
-	//http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("layer/admin/dist/images"))))
-	http.Handle("/images/", http.FileServer(http.Dir("layer/admin/dist")))
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("core/admin/dist"))))
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("core/admin/dist"))))
+	//http.Handle("/images/", http.StripPrefix("/images/", http.FileServer(http.Dir("core/admin/dist/images"))))
+	http.Handle("/images/", http.FileServer(http.Dir("core/admin/dist")))
 	for _, definition := range serviceHandlers {
 		if definition.handler != nil {
 			http.HandleFunc(definition.path+"/", definition.handler)
@@ -170,7 +170,7 @@ func SendPage(w http.ResponseWriter, pageName string) error {
 }
 
 func getPageReader(name string) (*bufio.Reader, error) {
-	page, err := os.Open("layer/admin/dist/" + name)
+	page, err := os.Open("core/admin/dist/" + name)
 	if err != nil {
 		return nil, err
 	}
