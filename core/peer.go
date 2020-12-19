@@ -85,6 +85,7 @@ type PeerInfo struct {
 	Name      string   `json:"name"`
 	Address   Address  `json:"address"`
 	IP        string   `json:"ip"`
+	LocalIp   string   `json:"localIp"`
 	Port      int      `json:"port"`
 	Distance  Distance `json:"distance"`
 	PeerCount int      `json:"peers"`
@@ -363,6 +364,7 @@ func (peer Peer) Info() (info PeerInfo) {
 		Name:      peer.name,
 		Address:   peer.address,
 		IP:        peer.ip,
+		LocalIp:   peer.localIp,
 		Port:      peer.port,
 		Distance:  Me.Distance(peer),
 		PeerCount: len(peer.peers),
@@ -374,6 +376,7 @@ func (peerInfo PeerInfo) ApiInfo() ApiPeerInfo {
 		Name:      peerInfo.Name,
 		Address:   peerInfo.Address.String(),
 		IP:        peerInfo.IP,
+		LocalIP:   peerInfo.LocalIp,
 		Port:      peerInfo.Port,
 		Distance:  peerInfo.Distance,
 		PeerCount: peerInfo.PeerCount,
