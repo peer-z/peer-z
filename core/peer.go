@@ -65,6 +65,7 @@ type Peer struct {
 	gorm.Model
 	name        string       `json:"name"`
 	ip          string       `json:"ip"`
+	localIp     string       `json:"localIp"`
 	port        int          `json:"port"`
 	address     Address      `json:"address"`
 	routes      []Route      `json:"routes"`
@@ -93,6 +94,7 @@ type ApiPeerInfo struct {
 	Name      string   `json:"name"`
 	Address   string   `json:"address"`
 	IP        string   `json:"ip"`
+	LocalIP   string   `json:"localIp"`
 	Port      int      `json:"port"`
 	Distance  Distance `json:"distance"`
 	PeerCount int      `json:"peers"`

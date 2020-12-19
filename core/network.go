@@ -30,7 +30,7 @@ import (
 
 const (
 	MAGIC_NUMBER = 0x0368
-	RELAY_IP     = "127.0.0.1"
+	RELAY_IP     = "delphi.local"
 	RELAY_PORT   = 33200
 )
 

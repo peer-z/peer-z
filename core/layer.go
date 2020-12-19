@@ -23,6 +23,7 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 )
 
@@ -55,11 +56,27 @@ var (
 
 var baseDir string
 
+var (
+	signalChannel = make(chan os.Signal, 1)
+)
+
 //
 // --- Initialization
 //
 
+func signalHandler() {
+	for {
+		select {
+		case <-signalChannel:
+			igd.Clear((uint16)(*peerPort))
+			os.Exit(0)
+		}
+	}
+}
+
 func init() {
+	signal.Notify(signalChannel, os.Interrupt)
+
 	messageIdCounter = uint64(rand.Int63())
 
 	flag.Parse()
@@ -96,22 +113,27 @@ func init() {
 		log.Fatal(err)
 	}
 
+	go signalHandler()
+
 	// discover external IP
 	externalIP, err = igd.ExternalIP()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// forward a port
-	err = igd.Forward((uint16)(*peerPort), "peer-z")
-	if err != nil {
-		log.Fatal(err)
+	if portIsForwarded, err := igd.IsForwardedUDP((uint16)(*peerPort)); err != nil || !portIsForwarded {
+		// forward a port
+		err = igd.Forward((uint16)(*peerPort), "peer-z")
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	address := generateAddress()
 
 	if *relay {
 		address = BroadcastAddress
+		*mgmtPort = 33201
 	}
 
 	Me = NewPeer("me", address, externalIP, *peerPort)

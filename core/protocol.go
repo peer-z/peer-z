@@ -292,7 +292,7 @@ func (message peerMessage) encode(encoder *gob.Encoder) {
 func (message *peerMessage) decode(decoder *gob.Decoder) {
 	err := decoder.Decode(&message)
 	if err != nil {
-		Logln("Can't encode", err)
+		Logln("Can't decode", err)
 	}
 }
 
@@ -331,6 +331,7 @@ func handlePR(message *peerMessage) error {
 	peer := Me.peers.searchByInfo(source)
 	if peer == nil {
 		peer = NewPeer(source.Name, source.Address, source.IP, source.Port)
+		peer.localIp = message.Destination.IP
 		if _, err := Me.addPeer(*peer); err != nil {
 			refusePeering(peer, messageId, err.Error())
 			return err
@@ -391,8 +392,9 @@ func handlePL(message *peerMessage) error {
 		return errors.New("Peer disappeared")
 	}
 	var peers Peers
-	err := binary.Unmarshal(message.Content, peers)
-	if err != nil {
+	buffer := bytes.NewBuffer(message.Content)
+	decoder := gob.NewDecoder(buffer)
+	if err := decoder.Decode(peers); err != nil {
 		Logln("Failed decoding peer list")
 		return errors.New("Failed decoding peer list")
 	}

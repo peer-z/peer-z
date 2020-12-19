@@ -63,6 +63,7 @@
             <th>Name</th>
             <th>Address</th>
             <th>IP</th>
+            <th>Local IP</th>
             <th>Port</th>
             <th>Distance</th>
             <th>Peers</th>
@@ -72,6 +73,7 @@
             <td class="">{{ peer.name }}</td>
             <td class="">{{ peer.address }}</td>
             <td class="">{{ peer.ip }}</td>
+            <td class="">{{ peer.localIp }}</td>
             <td class="">{{ peer.port }}</td>
             <td class="center">{{ peer.distance }}</td>
             <td class="center">{{ peer.peers }}</td>
