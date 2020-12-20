@@ -391,11 +391,12 @@ func handlePL(message *peerMessage) error {
 		Logln("Can't find contact anymore... Weird!")
 		return errors.New("Peer disappeared")
 	}
-	var peers Peers
+
 	buffer := bytes.NewBuffer(message.Content)
 	decoder := gob.NewDecoder(buffer)
-	if err := decoder.Decode(peers); err != nil {
-		Logln("Failed decoding peer list")
+	var peers Peers
+	if err := decoder.Decode(&peers); err != nil {
+		Logln("Failed decoding peer list:", err)
 		return errors.New("Failed decoding peer list")
 	}
 	Logln("peerList received:", peers)

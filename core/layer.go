@@ -25,6 +25,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"strings"
+	"testing"
 )
 
 const (
@@ -75,6 +76,10 @@ func signalHandler() {
 }
 
 func init() {
+	func() {
+		testing.Init()
+	}()
+
 	signal.Notify(signalChannel, os.Interrupt)
 
 	messageIdCounter = uint64(rand.Int63())
