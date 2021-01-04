@@ -17,18 +17,18 @@
 package core
 
 import (
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"log"
+    "gorm.io/driver/sqlite"
+    "gorm.io/gorm"
+    "log"
 )
 
 var db *gorm.DB
 
 func initDatabase() {
-	var err error
-	db, err = gorm.Open(sqlite.Open(baseDir+"/peer-z.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Can't connect to DB")
-	}
-	db.AutoMigrate(&Peer{})
+    var err error
+    db, err = gorm.Open(sqlite.Open(baseDir+"/peer-z.db"), &gorm.Config{})
+    if err != nil {
+        log.Fatal("Can't connect to DB")
+    }
+    db.AutoMigrate(&Peer{})
 }

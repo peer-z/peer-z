@@ -20,7 +20,7 @@
       <div class="mailboxes col-2">
         <div class="column-top"></div>
         <div>
-          <div :class="{mailbox: true, selected: box.ID == currentBox.ID}" v-for="box in mailboxes"
+          <div v-for="box in mailboxes" :class="{mailbox: true, selected: box.ID == currentBox.ID}"
                v-on:click="getMessages(box)">
             {{ box.name }}
           </div>
@@ -31,8 +31,8 @@
           {{ currentBox.name }}
         </div>
         <div class="mail-list">
-          <div :class="{selected: msg.ID == currentMessage.ID}" v-if="currentBox" class="mail-summary"
-               v-for="msg in messages" v-on:click="showMessage(msg)">
+          <div v-for="msg in messages" v-if="currentBox" :class="{selected: msg.ID == currentMessage.ID}"
+               class="mail-summary" v-on:click="showMessage(msg)">
             <div class="mail-from">From</div>
             <div class="mail-date">{{ msg.dateSent.substring(0, 10) }}<br/>{{ msg.dateSent.substring(11, 19) }}</div>
             <div class="mail-subject">{{ msg.subject }}</div>
@@ -43,15 +43,15 @@
       <div class="mail-content col-6">
         <div>
           <ul class="list-group list-group-horizontal message-toolbox align-items-center">
-            <li class="list-group-item col center"><i class="fas fa-pen-square"></i> New</li>
+            <li class="list-group-item col center button"><i class="fas fa-pen-square"></i> New</li>
             <li class="list-group-item col-1 center spacer"></li>
-            <li class="list-group-item col center"><i class="fas fa-reply"></i> Reply</li>
-            <li class="list-group-item col center"><i class="fas fa-share"></i> Forward</li>
+            <li class="list-group-item col center button"><i class="fas fa-reply"></i> Reply</li>
+            <li class="list-group-item col center button"><i class="fas fa-share"></i> Forward</li>
             <li class="list-group-item col-1 center spacer"></li>
-            <li class="list-group-item col center"><i class="fas fa-trash"></i> Trash</li>
+            <li class="list-group-item col center button"><i class="fas fa-trash"></i> Trash</li>
           </ul>
         </div>
-        <div class="message" v-if="currentMessage.ID">
+        <div v-if="currentMessage.ID" class="message">
           <div class="mail-header">
             <div class="mail-from">From</div>
             <div class="mail-date">{{

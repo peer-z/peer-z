@@ -22,9 +22,16 @@
 
 $base-color: #0040a0;
 
-h1,h2,h3 {
-  font-family: "Permanent Marker", Serif;
+h1, h2, h3 {
+  font-family: "Jura", "Permanent Marker", Serif;
 }
+
+h4 {
+  font-size: 14px;
+  font-weight: bold;
+  border-bottom: 1px solid $base-color;
+}
+
 body {
   font-family: "Jura";
   font-size: 14px;
@@ -96,6 +103,12 @@ h2 {
 
 .float-left {
   float: left;
+}
+
+.main-panel {
+  .btn-link {
+    cursor: pointer;
+  }
 }
 
 /* messaging */
@@ -224,6 +237,10 @@ h2 {
       padding: 5px;
       color: $base-color;
 
+      &.button {
+        cursor: pointer;
+      }
+
       &:hover {
         background-color: $base-color;
         color: white;
@@ -281,6 +298,7 @@ h2 {
 
 .navbar {
   background-color: $base-color;
+  padding: 0 15px;
 
   &.navbar-dark .nav-link {
     cursor: pointer;
@@ -289,6 +307,53 @@ h2 {
       border-radius: 10px;
       background-color: white;
       color: $base-color;
+    }
+  }
+
+  .navbar-brand {
+    img {
+      height: 50px;
+      width: auto;
+    }
+  }
+}
+
+.action-box {
+  //width: 15%;
+  margin: 20px;
+  padding: 5px;
+  border: 1px solid lightgrey;
+  //min-height: 100vh;
+
+  select {
+    width: 100%;
+    &.games {
+      size: 5px;
+    }
+  }
+}
+
+.move-list {
+  //width: 15%;
+  margin: 20px;
+  padding: 5px;
+  border: 1px solid lightgrey;
+  //min-height: 100vh;
+
+  ul {
+    list-style: decimal;
+    font-family: 'Special Elite';
+    color: $base-color;
+
+    li {
+      div.color {
+        float: right;
+      }
+
+      &:hover {
+        color: white;
+        background-color: $base-color;
+      }
     }
   }
 }
@@ -331,8 +396,8 @@ h2 {
   td {
     padding: 0;
     margin: 0;
-    width: 60px;
-    height: 60px;
+    //width: 60px;
+    //height: 60px;
     vertical-align: middle;
     text-align: center;
 
@@ -352,6 +417,10 @@ h2 {
       background: yellow;
     }
 
+    &.piece-moved {
+      background: orange;
+    }
+
     img {
       width: 60px;
       //height:60px;
@@ -367,7 +436,7 @@ h2 {
 div.about {
   div {
     img {
-      max-width:100%;
+      max-width: 100%;
       border: solid 1px grey;
       box-shadow: 5px 5px 10px;
     }
@@ -392,11 +461,13 @@ div.about {
     td {
       padding: 5px 10px;
     }
+
     td:first-of-type {
       width: 30%;
       font-weight: bold;
       font-family: "Special Elite", cursive;
     }
+
     td:last-of-type {
       font-family: "Jura", cursive;
     }

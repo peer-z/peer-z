@@ -38,13 +38,11 @@ export default {
   // name: "messaging",
   props: [],
   data() {
-    return {
-    }
+    return {}
   },
   watch: {},
   mounted() {
   },
-  methods: {
-  }
+  methods: {}
 };
 </script>

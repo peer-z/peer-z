@@ -17,12 +17,12 @@
 package core
 
 var storageService = Service{
-	Info: ServiceInfo{
-		Name:        "Storage",
-		Id:          storageServiceID,
-		Version:     0x0100, // version 1.00
-		address:     storageServiceAddress,
-		Description: "A basic storage service to distribute data among peers",
-		flags:       0,
-	},
+    Info: ServiceInfo{
+        Name:        "Storage",
+        Id:          storageServiceID,
+        Version:     0x0100, // version 1.00
+        address:     storageServiceAddress,
+        Description: "A basic storage service to distribute data among peers",
+        flags:       0,
+    },
 }

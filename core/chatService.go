@@ -17,17 +17,17 @@
 package core
 
 var chatService = Service{
-	Info: ServiceInfo{
-		Name:        "Chat",
-		Id:          chatServiceID,
-		Version:     0x0100, // version 1.00
-		address:     chatServiceAddress,
-		Description: "A basic realtime messaging service for people to chat",
-		flags:       0,
-	},
-	init: initChat,
+    Info: ServiceInfo{
+        Name:        "Chat",
+        Id:          chatServiceID,
+        Version:     0x0100, // version 1.00
+        address:     chatServiceAddress,
+        Description: "A basic realtime messaging service for people to chat",
+        flags:       0,
+    },
+    init: initChat,
 }
 
 func initChat() {
-	Logln("Chat started")
+    Logln("Chat started")
 }

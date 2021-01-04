@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/alecthomas/binary v0.0.0-20190922233330-fb1b1d9c299c
 	github.com/dustinkirkland/golang-petname v0.0.0-20191129215211-8e5a1ed0cff0
+	github.com/go-chi/chi v1.5.1
 	github.com/stretchr/testify v1.6.1 // indirect
 	gitlab.com/NebulousLabs/fastrand v0.0.0-20181126182046-603482d69e40 // indirect
 	gitlab.com/NebulousLabs/go-upnp v0.0.0-20181011194642-3a71999ed0d3

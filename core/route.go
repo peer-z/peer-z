@@ -17,7 +17,7 @@
 package core
 
 type Route struct {
-	address Address
-	gateway Peer
-	distance Distance
+    address  Address
+    gateway  Peer
+    distance Distance
 }

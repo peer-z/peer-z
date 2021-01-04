@@ -18,14 +18,14 @@
   <div>
     <nav class="container navbar navbar-expand-lg navbar-dark">
       <a class="navbar-brand" href="#">
-        <img width="30" height="30" src="/images/z-logo-50.png"/>
+        <img height="30" src="/images/z-logo-50.png" width="30"/>
       </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+              data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div id="navbarSupportedContent" class="collapse navbar-collapse">
         <ul class="navbar-nav">
           <li :class="{'nav-item':true, active:(service=='home')}">
             <div class="nav-link" href="#" v-on:click="setService('home')">Home</div>
@@ -99,7 +99,7 @@
 <script>
 export default {
   props: [
-      'content'
+    'content'
   ],
   data: function () {
     return {
@@ -110,7 +110,7 @@ export default {
     // this.setService('main');
   },
   watch: {
-    content: function(value) {
+    content: function (value) {
       this.service = value;
     }
   },

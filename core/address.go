@@ -17,22 +17,22 @@
 package core
 
 import (
-	"crypto/rand"
-	"fmt"
-	"log"
+    "crypto/rand"
+    "fmt"
+    "log"
 )
 
 const (
-	AddressSize = 4
-	DistMax     = 1<<15 - 1
+    AddressSize = 4
+    DistMax     = 1<<15 - 1
 )
 
 type Address [AddressSize]uint16
 type Distance uint16
 
 var (
-	AddressNone      = Address{0}
-	BroadcastAddress = Address{65535}
+    AddressNone      = Address{0}
+    BroadcastAddress = Address{65535}
 )
 
 //
@@ -40,44 +40,44 @@ var (
 //
 
 func (address Address) Distance(address2 Address) Distance {
-	var d int16 = DistMax
-	//var vLow, v2Low PeerAddress
-	for i, v := range address {
-		v2 := address2[i]
-		//for j := range *peerAddress {
-		// Abs returns the absolute value of x.
-		di := Abs(Abs(int16(v)-32767) - Abs(int16(v2)-32767))
-		//if di > DistMax/2 {
-		//	di = DistMax - di
-		//}
-		if di < d {
-			d = di
-		}
-		//}
-	}
-	if d > 0 {
-	WORMHOLE_TEST:
-		for i, v := range address {
-			for j, v2 := range address2 {
-				if v == v2 && i != j {
-					d = 0
-					break WORMHOLE_TEST
-				}
-			}
-		}
-	}
-	return Distance(d)
+    var d int16 = DistMax
+    //var vLow, v2Low PeerAddress
+    for i, v := range address {
+        v2 := address2[i]
+        //for j := range *peerAddress {
+        // Abs returns the absolute value of x.
+        di := Abs(Abs(int16(v)-32767) - Abs(int16(v2)-32767))
+        //if di > DistMax/2 {
+        //	di = DistMax - di
+        //}
+        if di < d {
+            d = di
+        }
+        //}
+    }
+    if d > 0 {
+    WORMHOLE_TEST:
+        for i, v := range address {
+            for j, v2 := range address2 {
+                if v == v2 && i != j {
+                    d = 0
+                    break WORMHOLE_TEST
+                }
+            }
+        }
+    }
+    return Distance(d)
 }
 
 func Abs(x int16) int16 {
-	if x < 0 {
-		return -x
-	}
-	return x
+    if x < 0 {
+        return -x
+    }
+    return x
 }
 
 func (address Address) isBroadcast() bool {
-	return address == BroadcastAddress
+    return address == BroadcastAddress
 }
 
 //
@@ -85,19 +85,19 @@ func (address Address) isBroadcast() bool {
 //
 
 func generateAddress() (address Address) {
-	for i := range address {
-		for ; address[i] == 0 || address[i] == 65535; {
-			addr := make([]byte, 2)
-			for ; uint16(addr[0])<<8+uint16(addr[1]) == 0 ||
-							uint16(addr[0])<<8+uint16(addr[1]) == 65535; {
-				if _, err := rand.Read(addr); err != nil {
-					log.Fatal("Can't generate address")
-				}
-			}
-			address[i] = uint16(addr[0])<<8 + uint16(addr[1])
-		}
-	}
-	return address
+    for i := range address {
+        for ; address[i] == 0 || address[i] == 65535; {
+            addr := make([]byte, 2)
+            for ; uint16(addr[0])<<8+uint16(addr[1]) == 0 ||
+                uint16(addr[0])<<8+uint16(addr[1]) == 65535; {
+                if _, err := rand.Read(addr); err != nil {
+                    log.Fatal("Can't generate address")
+                }
+            }
+            address[i] = uint16(addr[0])<<8 + uint16(addr[1])
+        }
+    }
+    return address
 }
 
 //
@@ -105,13 +105,13 @@ func generateAddress() (address Address) {
 //
 
 func (address Address) String() (value string) {
-	for i, a := range address {
-		if i > 0 {
-			value += ":"
-		}
-		if a != 0 {
-			value += fmt.Sprintf("%x", a)
-		}
-	}
-	return value
+    for i, a := range address {
+        if i > 0 {
+            value += ":"
+        }
+        if a != 0 {
+            value += fmt.Sprintf("%x", a)
+        }
+    }
+    return value
 }

@@ -21,7 +21,7 @@
       <table class="chess justify-content-center align-items-center">
         <thead>
         <td class="v-board-side h-board-side"></td>
-        <td class="h-board-side upside-down-text" v-for="col in boardWidth">
+        <td v-for="col in boardWidth" class="h-board-side upside-down-text">
           {{ myColor == BLACK ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.substr(boardWidth - col, 1) : "" }}
         </td>
         <td class="v-board-side h-board-side"></td>
@@ -29,14 +29,14 @@
         <tbody>
         <tr v-for="row in boardHeight">
           <td class="v-board-side">{{ myColor == WHITE ? boardWidth - row + 1 : "" }}</td>
-          <td v-on:click="moveTo(boardHeight-row,col-1)"
-              :class="square(  boardHeight-row,col-1)" :id="id(boardHeight-row,col-1)"
-              v-for="col in boardWidth">
+          <td v-for="col in boardWidth"
+              :id="id(boardHeight-row,col-1)" :class="square(  boardHeight-row,col-1)"
+              v-on:click="moveTo(boardHeight-row,col-1)">
             <!--            <div v-if="boardReady">{{ board[boardHeight-row][col-1] }}</div>-->
-            <img v-on:click="move(boardHeight-row,col-1)"
-                 v-if="boardReady && piece(boardHeight-row,col-1) != ''" :src="piece(boardHeight-row,col-1)"/>
+            <img v-if="boardReady && piece(boardHeight-row,col-1) != ''"
+                 :src="piece(boardHeight-row,col-1)" v-on:click="move(boardHeight-row,col-1)"/>
             <!--            <img :class="{movable:row==6}" v-if="row>5 && (col+row)%2 == 1" src="images/white-pawn.png"/>-->
-            <div class="moves" v-if="boardReady && moves[boardHeight-row][col-1]>0">{{
+            <div v-if="boardReady && moves[boardHeight-row][col-1]>0" class="moves">{{
                 moves[boardHeight - row][col - 1]
               }}
             </div>
@@ -46,15 +46,15 @@
         </tbody>
         <thead>
         <td class="v-board-side h-board-side"></td>
-        <td class="h-board-side" v-for="col in boardWidth">
+        <td v-for="col in boardWidth" class="h-board-side">
           {{ myColor == WHITE ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ".substr(col - 1, 1) : "" }}
         </td>
         <td class="v-board-side h-board-side"></td>
         </thead>
       </table>
       <div class="col">
-        <input type="radio" v-model="myColor" :value="WHITE"> White<br/>
-        <input type="radio" v-model="myColor" :value="BLACK"> Black
+        <input v-model="myColor" :value="WHITE" type="radio"> White<br/>
+        <input v-model="myColor" :value="BLACK" type="radio"> Black
       </div>
     </div>
   </div>

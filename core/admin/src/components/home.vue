@@ -16,7 +16,7 @@
 
 <template>
   <div>
-    <div class="row">
+    <div class="main-panel row">
       <div class="col">
 
         <h2>Me</h2>
@@ -38,7 +38,7 @@
         </table>
 
         <h2>Services</h2>
-        <table class="services col-sm-12" v-if="services.length>0">
+        <table v-if="services.length>0" class="services col-sm-12">
           <tr>
             <th class="center">#</th>
             <th>Name</th>
@@ -48,7 +48,9 @@
           <tr v-for="service in services">
             <td class="counter center">{{ service.info.id }}</td>
             <td class="">
-              <div class="btn-link" v-on:click="$emit('update:content',service.info.name.toLowerCase())">{{ service.info.name }}</div>
+              <div class="btn-link" v-on:click="$emit('update:content',service.info.name.toLowerCase())">
+                {{ service.info.name }}
+              </div>
             </td>
             <td class="">{{ service.info.description }}</td>
             <td class="">{{ service.info.version / 256 }}.{{ service.info.version % 256 }}</td>
@@ -57,7 +59,7 @@
       </div>
       <div class="col">
         <h2>Peers</h2>
-        <table class="peers col-sm-12" v-if="peers.length>0">
+        <table v-if="peers.length>0" class="peers col-sm-12">
           <tr>
             <th class="center">#</th>
             <th>Name</th>
@@ -69,7 +71,7 @@
             <th>Peers</th>
           </tr>
           <tr v-for="(peer,index) in peers">
-            <td class="counter center">{{ index+1 }}</td>
+            <td class="counter center">{{ index + 1 }}</td>
             <td class="">{{ peer.name }}</td>
             <td class="">{{ peer.address }}</td>
             <td class="">{{ peer.ip }}</td>
@@ -91,10 +93,10 @@ export default {
     return {
       peers: [],
       services: [],
-      me: { Name: "" },
+      me: {Name: ""},
     };
   },
-  mounted: function() {
+  mounted: function () {
     this.getMe();
     this.getServices();
     this.getPeers();

@@ -17,7 +17,7 @@
 package core
 
 import (
-	"log"
+    "log"
 )
 
 //
@@ -25,48 +25,47 @@ import (
 //
 
 const (
-	unusedServiceID = iota
-	messagingServiceID
-	profileServiceID
-	webServiceID
-	chatServiceID
-	storageServiceID
-	checkerServiceID
-	chessServiceID
+    unusedServiceID = iota
+    messagingServiceID
+    profileServiceID
+    webServiceID
+    chatServiceID
+    storageServiceID
+    checkerServiceID
+    chessServiceID
 )
 
 var (
-	messagingServiceAddress = Address{0, 0, 0, messagingServiceID}
-	profileServiceAddress   = Address{0, 0, 0, profileServiceID}
-	webServiceAddress       = Address{0, 0, 0, webServiceID}
-	chatServiceAddress      = Address{0, 0, 0, chatServiceID}
-	storageServiceAddress   = Address{0, 0, 0, storageServiceID}
-	checkerServiceAddress   = Address{0, 0, 0, checkerServiceID}
-	chessServiceAddress     = Address{0, 0, 0, chessServiceID}
+    messagingServiceAddress = Address{0, 0, 0, messagingServiceID}
+    profileServiceAddress   = Address{0, 0, 0, profileServiceID}
+    webServiceAddress       = Address{0, 0, 0, webServiceID}
+    chatServiceAddress      = Address{0, 0, 0, chatServiceID}
+    storageServiceAddress   = Address{0, 0, 0, storageServiceID}
+    checkerServiceAddress   = Address{0, 0, 0, checkerServiceID}
+    chessServiceAddress     = Address{0, 0, 0, chessServiceID}
 )
 
 var defaultServices = []Service{
-	messagingService,
-	profileService,
-	webService,
-	chatService,
-	storageService,
-	checkerService,
-	chessService,
+    messagingService,
+    profileService,
+    webService,
+    chatService,
+    storageService,
+    checkerService,
+    chessService,
 }
 
 // Internal function to register initial services
 func registerDefaultServices() {
-	for _, service := range defaultServices {
-		if err := directory.Register(service); err != nil {
-			log.Fatalf("Failed registering service %d [%s]", service.Info.Id, service.Info.Name)
-		}
-		Loglnf("Registering service %d [%s]", service.Info.Id, service.Info.Name)
-		service.StartService()
-	}
+    for _, service := range defaultServices {
+        if err := directory.Register(service); err != nil {
+            log.Fatalf("Failed registering service %d [%s]", service.Info.Id, service.Info.Name)
+        }
+        Loglnf("Registering service %d [%s]", service.Info.Id, service.Info.Name)
+        service.StartService()
+    }
 }
 
 //
 // ---
 //
-

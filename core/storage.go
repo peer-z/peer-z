@@ -17,25 +17,25 @@
 package core
 
 import (
-	"errors"
-	"os"
-	"strings"
+    "errors"
+    "os"
+    "strings"
 )
 
 type StorageBlock struct {
-	name string
-	path string
-	size int
-	file os.File
+    name string
+    path string
+    size int
+    file os.File
 }
 
 type StoredData struct {
-	blocks []StorageBlock
+    blocks []StorageBlock
 }
 
 type Storage struct {
-	shared  StoredData
-	private StoredData
+    shared  StoredData
+    private StoredData
 }
 
 var storage Storage
@@ -45,15 +45,14 @@ var storage Storage
 //
 
 func (storageData StoredData) AddBlock(block StorageBlock) {
-	storageData.blocks = append(storageData.blocks, block)
+    storageData.blocks = append(storageData.blocks, block)
 }
 
 func (storageData StoredData) Search(name string) (*StorageBlock, error) {
-	for _, block := range storageData.blocks {
-		if strings.Compare(block.name, name) == 0 {
-			return &block, nil
-		}
-	}
-	return nil, errors.New("Block Not Found")
+    for _, block := range storageData.blocks {
+        if strings.Compare(block.name, name) == 0 {
+            return &block, nil
+        }
+    }
+    return nil, errors.New("Block Not Found")
 }
-

@@ -21,6 +21,7 @@ var axios = require('axios');
 import './style.scss';
 // import VueLoader from "vue-loader";
 import './images/logo.png';
+import './images/blank.png';
 import './images/black-pawn.png';
 import './images/white-pawn.png';
 import './images/black-king.png';

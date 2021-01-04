@@ -16,42 +16,91 @@
 
 <template>
   <div>
-    <div class="row align-items-center justify-content-center">
-      <div class="col">{{ currentAction }}</div>
+    <div class="row align-items-start justify-content-center">
+      <div class="col form align-items-start action-box">
+        <!--        <form class="game-options">-->
+        <div class="form-group">
+          <label for="games">Games</label>
+          <select id="games" class="form-select" v-model="gameId">
+            <option value="0" :selected="games.length === 0">New</option>
+            <option v-for="game in games" :selected="gameId === game.ID" :value="game.ID">{{ game.name }}</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="rows">Rows</label>
+            <select id="rows" v-model="rows" :disabled="gameId > 0">
+              <option v-for="numRows in 4" :selected="(6+numRows*2) === rows" :value="6+numRows*2">{{
+                  6 + numRows * 2
+                }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group col">
+            <label for="columns">Columns</label>
+            <select id="columns" v-model="columns" :disabled="gameId > 0">
+              <option v-for="numColumns in 9" :selected="(7+numColumns) === columns" :value="7 + numColumns">{{
+                  7 + numColumns
+                }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="color">Color</label>
+          <select id="color" v-model="game.color" :disabled="gameId > 0">
+            <option v-for="color in colors" :selected="color.id === game.color" :value="color.id">{{
+                color.name
+              }}
+            </option>
+          </select>
+        </div>
+        <!--        </form>-->
+      </div>
       <table class="checkers justify-content-center align-items-center">
         <thead>
         <td class="v-board-side h-board-side"></td>
-        <td class="h-board-side upside-down-text" v-for="col in boardWidth">
-          {{ myColor == BLACK ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.substr(boardWidth - col, 1) : "" }}
+        <td v-for="col in game.columns" class="h-board-side upside-down-text">
+          {{ game.color == BLACK ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.substr(game.columns - col, 1) : " " }}
         </td>
         <td class="v-board-side h-board-side"></td>
         </thead>
         <tbody>
-        <tr v-for="row in boardHeight">
-          <td class="v-board-side">{{ myColor == WHITE ? boardWidth - row + 1 : "" }}</td>
-          <td v-on:click="moveTo(boardHeight-row,col-1)"
-              :class="square(  boardHeight-row,col-1)" :id="id(boardHeight-row,col-1)"
-              v-for="col in boardWidth">
+        <tr v-for="row in game.rows">
+          <td class="v-board-side">{{ game.color == WHITE ? game.rows - row + 1 : " " }}</td>
+          <td v-for="col in game.columns"
+              :style="{width:(60-2*(game.rows-8))+'px',height:((60-2*(game.rows-8)))+'px'}"
+              :id="id(game.rows-row,col-1)" :class="square(  game.rows-row,col-1)"
+              v-on:click="moveTo(game.rows-row,col-1)">
             <!--            <div v-if="boardReady">{{ board[boardHeight-row][col-1] }}</div>-->
-            <img v-on:click="move(boardHeight-row,col-1)"
-                 v-if="boardReady && piece(boardHeight-row,col-1) != ''" :src="piece(boardHeight-row,col-1)"/>
+            <img
+                :style="{width:(60-2*(game.rows-8))+'px',height:((60-2*(game.rows-8)))+'px'}"
+                v-if="boardReady/* && piece(game.rows-row,col-1) != ''*/"
+                :src="piece(game.rows-row,col-1)"/>
             <!--            <img :class="{movable:row==6}" v-if="row>5 && (col+row)%2 == 1" src="images/white-pawn.png"/>-->
-            <div class="moves" v-if="boardReady && moves[boardHeight-row][col-1]>0">{{ moves[boardHeight - row][col - 1] }}</div>
+            <!--            <div v-if="boardReady && moves[game.rows-row][col-1]>0" class="moves">{{-->
+            <!--                moves[game.rows - row][col - 1]-->
+            <!--              }}-->
+            <!--            </div>-->
           </td>
-          <td class="v-board-side upside-down-text">{{ myColor == BLACK ? row : "" }}</td>
+          <td class="v-board-side upside-down-text">{{ game.color == BLACK ? row : " " }}</td>
         </tr>
         </tbody>
         <thead>
         <td class="v-board-side h-board-side"></td>
-        <td class="h-board-side" v-for="col in boardWidth">
-          {{ myColor == WHITE ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ".substr(col - 1, 1) : "" }}
+        <td v-for="col in game.columns" class="h-board-side">
+          {{ game.color == WHITE ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ".substr(col - 1, 1) : " " }}
         </td>
         <td class="v-board-side h-board-side"></td>
         </thead>
       </table>
-      <div class="col">
-        <input type="radio" v-model="myColor" :value="WHITE"> White<br/>
-        <input type="radio" v-model="myColor" :value="BLACK"> Black
+      <div class="col move-list">
+        <h4>Moves</h4>
+        <ul v-on:mouseleave="getBoard(gameId)">
+          <li v-for="(move,item) in game.Moves" v-on:mouseover="showBoardAt(item)">{{ move.desc }}
+            <div class="color">{{ item % 2 == 0 ? "W" : "B" }}</div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -66,82 +115,172 @@ export default {
   props: [],
   data() {
     return {
-      BLANK: BLANK,
+      colors: [
+        {
+          id: BLACK,
+          name: "Black",
+        },
+        {
+          id: WHITE,
+          name: "White",
+        },
+      ],
       BLACK: BLACK,
       WHITE: WHITE,
       SIMPLE_MOVE: 0,
       JUMP_MOVE: 1,
-      boardWidth: 10,
-      boardHeight: 10,
-      pawnRows: 4,
       board: [],
       moves: [],
       boardUpdated: false,
       boardReady: false,
       myColor: WHITE,
-      myTurn: this.myColor == WHITE,
+      myTurn: true,
       moving: false,
       currentRow: -1,
       currentCol: -1,
       singlePlayer: true,
       currentAction: "Starting...",
+      gameId: 0,
+      games: [],
+      game: {},
+      defaultGame: {
+        color: WHITE,
+        columns: 8,
+        rows: 8,
+        Moves: [],
+      },
+      movelist: [],
+      rows: 8,
+      columns: 8,
+      shownMove: -1,
+      marked: [],
+      currentMarked: 0,
+      markedTimer: null,
     }
   },
   watch: {
     boardReady: function (value) {
       if (value) {
-        this.boardUpdated = false;
+        this.boardUpdated = true;
         // this.refreshBoard();
       }
     },
+    gameId: function (value) {
+      this.getMoves(value);
+    },
+    rows: function (value) {
+      this.game.rows = value;
+      this.getBoard(this.gameId);
+    },
+    columns: function (value) {
+      this.game.columns = value;
+      this.getBoard(this.gameId);
+    },
   },
   mounted() {
-    this.setupBoard();
+    this.getGames();
   },
   updated() {
     this.$nextTick(function () {
       if (this.boardUpdated) {
         console.log("refreshed");
-        // this.refreshBoard();
+        // this.render()
         this.boardUpdated = false;
+        // this.refreshBoard();
       }
     });
   },
   methods: {
-    setupBoard: function () {
-      for (let i = 0; i < this.boardHeight; i++) {
-        this.board[i] = [];
-        this.moves[i] = [];
-        for (let j = 0; j < this.boardWidth; j++) {
-          this.board[i][j] = {
-            color: BLANK,
-            piece: EMPTY,
-          }
-          this.moves[i][j] = false;
-          if ((i + j) % 2 == 0 && i < this.pawnRows) {
-            this.board[i][j] = {
-              color: WHITE,
-              piece: PAWN,
+    showBoardAt: function(numMove) {
+      if (this.boardReady) {
+        console.log(numMove);
+        this.getBoard(this.gameId,numMove);
+        this.shownMove = numMove;
+        this.marked = this.game.Moves[this.shownMove].move.Positions;
+        var vm = this;
+        if (this.markedTimer) {
+          clearInterval(this.markedTimer);
+          this.markedTimer = null;
+        }
+        this.markedTimer = setInterval(function() {
+          vm.currentMarked = (vm.currentMarked + 1) % vm.marked.length;
+        },200);
+      }
+    },
+    getGames: function () {
+      var vm = this;
+      this.games = [];
+      this.gameId = 0;
+      axios.get('/checkers')
+          .then(function (response) {
+            vm.games = response.data;
+            if (vm.games.length > 0) {
+              vm.gameId = vm.games[vm.games.length - 1].ID;
             }
-          } else if ((i + j) % 2 == 0 && i >= this.boardHeight - this.pawnRows) {
-            this.board[i][j] = {
-              color: BLACK,
-              piece: PAWN,
-            }
-          }
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            // always executed
+          });
+      // this.setupBoard();
+    },
+    getMoves: function (gameId) {
+      if (gameId == 0) {
+        this.game = this.defaultGame;
+        this.game.Moves = [];
+        this.getBoard(gameId);
+        return;
+      }
+      console.log("requesting game " + gameId);
+      var vm = this;
+      axios.get('/checkers/' + gameId)
+          .then(function (response) {
+            vm.game = response.data;
+            vm.getBoard(gameId)
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            // always executed
+          });
+    },
+    getBoard: function (gameId, moveNum) {
+      console.log("requesting board for game " + gameId);
+      var vm = this;
+      let url = '/checkers/' + gameId + '/board';
+      let query = '';
+      if (gameId == 0) {
+        query += '?r=' + this.rows + '&c=' + this.columns;
+      } else if (moveNum !== undefined) {
+        url += '/' + moveNum
+      } else {
+        this.shownMove = -1;
+        if (this.markedTimer) {
+          clearInterval(this.markedTimer);
+          this.markedTimer = null;
         }
       }
-      this.boardReady = true;
-      this.nextTurn();
-      // console.log(this.board);
-      // this.boardUpdated = true;
-      // this.refreshBoard();
+      axios.get(url + query)
+          .then(function (response) {
+            vm.board = response.data.board;
+            vm.jail = response.data.jail;
+            vm.boardReady = true;
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
+          .then(function () {
+            // always executed
+          });
     },
     row: function (r) {
-      return this.myColor == WHITE ? r : this.boardHeight - r - 1;
+      return this.game.color == WHITE ? r : this.game.rows - r - 1;
     },
     col: function (c) {
-      return this.myColor == WHITE ? c : this.boardWidth - c - 1;
+      return this.game.color == WHITE ? c : this.game.columns - c - 1;
     },
     id: function (i, j) {
       return 'r' + this.row(i) + 'c' + this.col(j);
@@ -155,14 +294,23 @@ export default {
           "light": (i + j) % 2 == 1,
         }
       }
+      let marked = false;
+      if (this.shownMove >= 0) {
+        let position = this.marked[this.currentMarked];
+        if (i == position.row && j == position.column) {
+          marked = true;
+        }
+      }
       return {
         "dark": (i + j) % 2 == 0,
         "light": (i + j) % 2 == 1,
-        "piece-to-move": i == this.currentRow && j == this.currentCol,
-        "targetable": this.moves[i][j] > 0,
+        "piece-moved": marked,
+        // "piece-to-move": i == this.currentRow && j == this.currentCol,
+        // "targetable": this.moves[i][j] > 0,
       };
     },
     piece: function (r, c) {
+      console.log("piece for " + r + "," + c);
       let i = this.row(r);
       let j = this.col(c);
       let name = "/images/";
@@ -174,9 +322,9 @@ export default {
           name += "white-";
           break;
         default:
-          return "";
+          name += "blank";
       }
-      switch (this.board[i][j].piece) {
+      switch (this.board[i][j].type) {
         case PAWN:
           name += "pawn";
           break;
@@ -184,7 +332,7 @@ export default {
           name += "king";
           break;
         default:
-          return "";
+          break;
       }
       name += ".png";
       return name;
@@ -196,248 +344,6 @@ export default {
         }
       }
     },
-  //   move: function (row, col) {
-  //     console.log(row, col);
-  //     let square = this.board[row][col];
-  //     if (!this.myTurn
-  //         || this.myColor != square.color) {
-  //       return;
-  //     }
-  //     this.moving = row == this.currentRow && col == this.currentCol ? false : true;
-  //     if (this.moving) {
-  //       this.currentRow = this.row(row);
-  //       this.currentCol = this.col(col);
-  //       this.clearMoves();
-  //       this.checkMoves(this.board[row][col], row, col, 1);
-  //       for (let i = 0; i < this.boardHeight; i++) {
-  //         for (let j = 0; j < this.boardWidth; j++) {
-  //           if (this.moves[i][j] > 0) {
-  //             return;
-  //           }
-  //         }
-  //       }
-  //     } else {
-  //       this.currentCol = -1;
-  //       this.currentRow = -1;
-  //       this.clearMoves();
-  //     }
-  //   },
-  //   moveTo: function (row, col) {
-  //     let i = this.row(row);
-  //     let j = this.col(col);
-  //     if (this.moves[i][j] == 0 || this.moves[i][j] > 2) {
-  //       return;
-  //     }
-  //     this.board[i][j] = this.board[this.currentRow][this.currentCol];
-  //     this.board[this.currentRow][this.currentCol] = {color: BLANK, piece: EMPTY};
-  //     if (this.moves[i][j] > 1) {
-  //       this.board[Math.floor((i+this.currentRow)/2)][Math.floor((j+this.currentCol)/2)] = {
-  //         color: BLANK,
-  //         piece: EMPTY,
-  //       };
-  //       this.currentRow = i;
-  //       this.currentCol = j;
-  //       this.clearMoves();
-  //       if (!this.checkMoves(this.board[i][j], i, j, 2, true)) {
-  //         this.moving = false;
-  //         this.myTurn = false;
-  //         this.currentRow = this.currentCol = -1;
-  //       }
-  //     } else {
-  //       this.moving = false;
-  //       this.myTurn = false;
-  //       this.currentRow = this.currentCol = -1;
-  //     }
-  //     this.boardUpdated = true;
-  //     this.nextTurn();
-  //   },
-  //   nextTurn() {
-  //     if (!this.myTurn && this.singlePlayer) {
-  //       this.currentAction = "Thinking...";
-  //       this.calculateMove();
-  //     } else if (this.myTurn) {
-  //       this.currentAction = "Your turn...";
-  //     }
-  //   },
-  //   checkMoves(square, row, col, level, jumpOnly = false) {
-  //     // console.log(row,col);
-  //     let hasMoves = false;
-  //     let direction = square.color == WHITE ? 1 : -1;
-  //     if (!jumpOnly) {
-  //       for (let i = 0; i < 4; i++) {
-  //         let x = (i % 2) == 0 ? col + 1 : col - 1;
-  //         if (x < 0 || x >= this.boardWidth) {
-  //           continue;
-  //         }
-  //         let y = (i > 1) ? row + 1 : row - 1;
-  //         if (y < 0 || y >= this.boardHeight) {
-  //           continue;
-  //         }
-  //         if (((y > row && direction == -1) || (y < row && direction == 1)) && square.piece == PAWN) {
-  //           continue;
-  //         }
-  //         // console.log("testing",y,x);
-  //         if (this.board[y][x].color == BLANK || this.board[y][x].piece == EMPTY) {
-  //           this.moves[y][x] = level;
-  //           hasMoves = true;
-  //         }
-  //         // console.log(y, x, this.board[y][x], this.moves[y][x]);
-  //       }
-  //       level++;
-  //     }
-  //     for (let i = 0; i < 4; i++) {
-  //       let x = (i % 2) == 0 ? col + 1 : col - 1;
-  //       if (x < 0 || x >= this.boardWidth) {
-  //         continue;
-  //       }
-  //       let y = (i > 1) ? row + 1 : row - 1;
-  //       if (y < 0 || y >= this.boardHeight) {
-  //         continue;
-  //       }
-  //       if (this.board[y][x].color == square.color || this.board[y][x].piece == EMPTY) {
-  //         continue;
-  //       }
-  //       x = (i % 2) == 0 ? col + 2 : col - 2;
-  //       if (x < 0 || x >= this.boardWidth) {
-  //         continue;
-  //       }
-  //       y = (i > 1) ? row + 2 : row - 2;
-  //       if (y < 0 || y >= this.boardHeight) {
-  //         continue;
-  //       }
-  //       if (this.board[y][x].piece == EMPTY && this.moves[y][x] == 0) {
-  //         this.moves[y][x] = level;
-  //         hasMoves |= this.checkMoves(square, y, x, level + 1, true);
-  //       }
-  //       // console.log(y, x, this.board[y][x], this.moves[y][x]);
-  //     }
-  //     return hasMoves;
-  //   },
-  //   calculateMove: function () {
-  //     console.log('calculating...');
-  //     this.moving = true;
-  //     let bestMove = [];
-  //     let moveTo = [];
-  //     let moveSize = 0;
-  //     for (let i = 0; i < this.boardHeight; i++) {
-  //       for (let j = 0; j < this.boardHeight; j++) {
-  //         if ((this.myColor == WHITE && this.board[i][j].color == BLACK)
-  //             || (this.myColor == BLACK && this.board[i][j].color == WHITE)) {
-  //           console.log("checking ", i, j);
-  //           this.currentRow = i;
-  //           this.currentCol = j;
-  //           this.clearMoves();
-  //           this.checkMoves(this.board[i][j], i, j, 1);
-  //           let size = 0;
-  //           let lastMove = [];
-  //           for (let k = 0; k < this.boardHeight; k++) {
-  //             for (let l = 0; l < this.boardHeight; l++) {
-  //               size += this.moves[k][l] ? 1 : 0;
-  //               if (this.moves[k][l]) {
-  //                 lastMove.push([k, l]);
-  //               }
-  //             }
-  //           }
-  //           if (size > moveSize) {
-  //             moveSize = size;
-  //             bestMove = [i, j];
-  //             let rnd = Math.floor(Math.random() * size);
-  //             moveTo = lastMove[rnd];
-  //           }
-  //         }
-  //       }
-  //       // let move = math.ceil(math.random() * moveable.length);
-  //     }
-  //     console.log("my play:", bestMove[0], bestMove[1], moveTo[0], moveTo[1])
-  //     this.board[moveTo[0]][moveTo[1]] = this.board[bestMove[0]][bestMove[1]];
-  //     this.board[bestMove[0]][bestMove[1]] = {color: BLANK, piece: EMPTY};
-  //     this.myTurn = true;
-  //     this.boardUpdated = true;
-  //     this.moving = false;
-  //     this.currentRow = this.currentCol = -1;
-  //     this.boardUpdated = true;
-  //     this.nextTurn();
-  //   },
-  // },
-  // refreshBoard: function () {
-  //   var moveIndex = 0;
-  //   let vm = this;
-  //   for (let i = 0; i < this.boardHeight; i++) {
-  //     for (let j = 0; j < this.boardWidth; j++) {
-  //       $('#' + this.id(i, j)).each(function () {
-  //         $(this).removeClass(['dark', 'light']).addClass((i + j) % 2 == 1 ? 'light' : 'dark');
-  //         let pos = this;
-  //         if (vm.board[i][j] == vm.EMPTY) {
-  //           $(this).attr('tag','');
-  //         } else if (vm.board[i][j] == vm.WHITE_PAWN) {
-  //           $('#' + vm.id(i, j) + ' img').each(function () {
-  //             let canBeDragged = false;
-  //             if (i > 0 && j > 0) {
-  //               canBeDragged |= vm.checkPosition(i + 1, j - 1, moveIndex, vm.SIMPLE_MOVE);
-  //             }
-  //             if (i > 0 && j < vm.boardWidth - 1) {
-  //               canBeDragged |= vm.checkPosition(i + 1, j + 1, moveIndex, vm.SIMPLE_MOVE);
-  //             }
-  //             if (canBeDragged) {
-  //               console.log(moveIndex);
-  //               let el = $(this).draggable({
-  //                 containment: '.checkers',
-  //                 scope: 'target_' + moveIndex,
-  //                 snap: true,
-  //                 snapMode: "inner",
-  //                 snapTolerance: 10,
-  //                 revert: 'invalid',
-  //                 start: function () {
-  //                   let tag = $(this).attr('tag')
-  //                   console.log('start ' + tag);
-  //                   $('.target_' + tag).each(function () {
-  //                     // console.log(this);
-  //                     $(this).droppable({
-  //                       accept: ".target_" + tag,
-  //                       scope: "target_" + tag,
-  //                       drop: function(event, ui) {
-  //                         let coords = $(ui.draggable).attr('id').split(/[rc]/);
-  //                         let row = parseInt(pos[1]);
-  //                         let col = parseInt(pos[2]);
-  //                         vm.board[row][col] = vm.WHITE_PAWN;
-  //                         // console.log(row,col);
-  //                         vm.boardUpdated = true;
-  //                         vm.boardReady = true;
-  //                       },
-  //                       classes: {
-  //                         "ui-droppable-active": "targetable",
-  //                         "ui-droppable-hover": "overtarget"
-  //                       },
-  //                     });
-  //                   });
-  //                 },
-  //                 stop: function () {
-  //                   console.log('stop');
-  //                   let tag = $(this).attr('tag')
-  //                   let pos = $(this).parent().attr('tag');
-  //                   let coords = pos.split(",");
-  //                   let row = parseInt(coords[0]);
-  //                   let col = parseInt(coords[1]);
-  //                   console.log(vm.board);
-  //                   vm.board[row][col] = vm.EMPTY;
-  //                   // vm.boardUpdated = true;
-  //                   $('.target_' + tag).each(function () {
-  //                     $(this).droppable("destroy");
-  //                   });
-  //                   vm.boardReady = false;
-  //                 },
-  //               });
-  //               el = $(el).addClass('target_' + moveIndex);
-  //               $(el).attr('tag', moveIndex);
-  //               moveIndex++;
-  //             }
-  //           });
-  //         }
-  //       });
-  //     }
-  //   }
-  //   this.boardReady = true;
-  // },
     checkPosition: function (i, j) {
       if (moveType == this.SIMPLE_MOVE && this.board[i][j] == EMPTY) {
         $('#' + this.id(i, j)).each(function () {
@@ -450,10 +356,6 @@ export default {
       let otherPawn = this.myColor == this.BLACK ? this.WHITE_PAWN : this.BLACK_PAWN;
       let otherKing = this.myColor == this.BLACK ? this.WHITE_KING : this.BLACK_KING;
       return false;
-      // if (moveType == JUMP_MOVE && (this.board[i, j] == myPawn || this.board[i, j] == myKing)) {
-      //
-      // }
-      // },
     },
   }
 }

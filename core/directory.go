@@ -17,22 +17,21 @@
 package core
 
 import (
-	"errors"
-	"strings"
+    "errors"
+    "strings"
 )
 
 const (
-	ALL = iota
-	REPORT_BY_NAME
-	REPORT_BY_DESCRIPTION
-	REPORT_BY_ID
-	REPORT_CATEGORIES
+    ALL = iota
+    REPORT_BY_NAME
+    REPORT_BY_DESCRIPTION
+    REPORT_BY_ID
+    REPORT_CATEGORIES
 )
 
 type ServiceReport [REPORT_CATEGORIES][]*Service
 
 var directory Directory
-
 
 //
 // --- Handle services
@@ -40,24 +39,24 @@ var directory Directory
 
 // Register a new service
 func (directory *Directory) Register(service Service) error {
-	if _, count := directory.Search(service); count > 0 {
-		return errors.New("Service already registered")
-	}
-	service.Info.flags |= SERVICE_NEW
-	directory.services = append(directory.services, service)
-	return nil
+    if _, count := directory.Search(service); count > 0 {
+        return errors.New("Service already registered")
+    }
+    service.Info.flags |= SERVICE_NEW
+    directory.services = append(directory.services, service)
+    return nil
 }
 
 // Abandon a service
 func (directory Directory) Deregister(service Service) error {
-	var report ServiceReport
-	var count int
-	if report, count = directory.Search(service); count == 0 {
-		return errors.New("Service not found")
-	}
-	report[REPORT_BY_ID][0].Info.address = AddressNone
-	report[REPORT_BY_ID][0].Info.flags |= SERVICE_ABANDONED | SERVICE_UPDATED
-	return nil
+    var report ServiceReport
+    var count int
+    if report, count = directory.Search(service); count == 0 {
+        return errors.New("Service not found")
+    }
+    report[REPORT_BY_ID][0].Info.address = AddressNone
+    report[REPORT_BY_ID][0].Info.flags |= SERVICE_ABANDONED | SERVICE_UPDATED
+    return nil
 }
 
 //
@@ -65,46 +64,46 @@ func (directory Directory) Deregister(service Service) error {
 //
 
 func (directory Directory) Search(serviceSearched Service) (report ServiceReport, count int) {
-	for _, service := range directory.services {
-		if strings.Compare(serviceSearched.Info.Name, service.Info.Name) == 0 {
-			report.add(REPORT_BY_NAME, &service)
-		}
-		if strings.Compare(serviceSearched.Info.Description, service.Info.Description) == 0 {
-			report.add(REPORT_BY_DESCRIPTION, &service)
-		}
-		if serviceSearched.Info.Id == service.Info.Id {
-			report.add(REPORT_BY_ID, &service)
-			count++
-		}
-	}
-	return report, count
+    for _, service := range directory.services {
+        if strings.Compare(serviceSearched.Info.Name, service.Info.Name) == 0 {
+            report.add(REPORT_BY_NAME, &service)
+        }
+        if strings.Compare(serviceSearched.Info.Description, service.Info.Description) == 0 {
+            report.add(REPORT_BY_DESCRIPTION, &service)
+        }
+        if serviceSearched.Info.Id == service.Info.Id {
+            report.add(REPORT_BY_ID, &service)
+            count++
+        }
+    }
+    return report, count
 }
 
 func (directory Directory) SearchByID(id int64) (*Service, error) {
-	for _, service := range directory.services {
-		if service.Info.Id == id {
-			return &service, nil
-		}
-	}
-	return nil, errors.New("Service not found")
+    for _, service := range directory.services {
+        if service.Info.Id == id {
+            return &service, nil
+        }
+    }
+    return nil, errors.New("Service not found")
 }
 
 func (directory Directory) SearchByName(name string) (*Service, error) {
-	for _, service := range directory.services {
-		if strings.Compare(service.Info.Name, name) == 0 {
-			return &service, nil
-		}
-	}
-	return nil, errors.New("Service not found")
+    for _, service := range directory.services {
+        if strings.Compare(service.Info.Name, name) == 0 {
+            return &service, nil
+        }
+    }
+    return nil, errors.New("Service not found")
 }
 
 func (directory Directory) SearchByDescription(description string) (services []*Service) {
-	for _, service := range directory.services {
-		if strings.Contains(service.Info.Description, description) {
-			services = append(services, &service)
-		}
-	}
-	return services
+    for _, service := range directory.services {
+        if strings.Contains(service.Info.Description, description) {
+            services = append(services, &service)
+        }
+    }
+    return services
 }
 
 //
@@ -112,5 +111,5 @@ func (directory Directory) SearchByDescription(description string) (services []*
 //
 
 func (report *ServiceReport) add(category int, service *Service) {
-	report[category] = append(report[category], service)
+    report[category] = append(report[category], service)
 }
