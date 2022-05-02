@@ -202,9 +202,12 @@ export default {
           clearInterval(this.markedTimer);
           this.markedTimer = null;
         }
-        this.markedTimer = setInterval(function() {
-          vm.currentMarked = (vm.currentMarked + 1) % vm.marked.length;
-        },200);
+        if (this.marked.length>0) {
+          this.currentMarked = 0;
+          this.markedTimer = setInterval(function () {
+            vm.currentMarked = (vm.currentMarked + 1) % vm.marked.length;
+          }, 200);
+        }
       }
     },
     getGames: function () {

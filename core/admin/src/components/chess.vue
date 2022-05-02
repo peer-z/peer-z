@@ -183,7 +183,7 @@ export default {
           name += "w-";
           break;
         default:
-          return "";
+          break;
       }
       switch (this.board[i][j].piece) {
         case PAWN:
@@ -205,7 +205,8 @@ export default {
           name += "king";
           break;
         default:
-          return "";
+          name += "blank";
+          break;
       }
       name += ".png";
       return name;
