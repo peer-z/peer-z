@@ -19,7 +19,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const Manifest = require('webpack-manifest-plugin');
 // const ManifestOptions = {};
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const {VueLoaderPlugin} = require('vue-loader')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {

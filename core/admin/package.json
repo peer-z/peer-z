@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "dependencies": {
     "axios": "^0.21.0",
-    "bootstrap": "^4.5.3",
-    "jquery": ">=3.5.0",
-    "jquery-ui": "^1.12.1",
+    "bootstrap": ">=5.3.2",
+    "jquery": ">=3.7",
+    "jquery-ui": ">=1.13",
     "json5-loader": "^4.0.1",
     "popper.js": "^1.16.1",
     "postcss": "^8.1.10",
-    "vue-i18n": "^8.22.2"
+    "vue-i18n": "^8.22.2",
+    "vue-loader": "^15.11.1"
   },
   "private": true,
   "scripts": {
@@ -33,11 +34,10 @@
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",
     "vue": "^2.6.12",
-    "vue-loader": "^15.9.5",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^4.44.2",
+    "webpack": "^5.89.0",
     "webpack-bundle-analyzer": "^4.1.0",
     "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^4.15.1"
   }
 }

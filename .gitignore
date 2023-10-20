@@ -12,10 +12,10 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
-core/admin/node_modules/**
+vendor
+core/admin/node_modules
 
 # IDE
 .idea/**
 peer-z
-vendor
+.DS_Store

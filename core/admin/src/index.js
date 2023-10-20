@@ -16,6 +16,8 @@
 
 // import Vue from 'vue';
 // import VueI18n from "vue-i18n";
+const Vue = require("vue");
+
 var axios = require('axios');
 // import './logo.png';
 import './style.scss';
@@ -81,7 +83,7 @@ Vue.component('profile', require('./components/profile.vue').default);
 Vue.component('checkers', require('./components/checkers.vue').default);
 Vue.component('chess', require('./components/chess.vue').default);
 
-var app = new Vue({
+let app = new Vue({
     el: "#app",
 })
 
