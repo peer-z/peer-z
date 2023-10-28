@@ -1,0 +1,476 @@
+/*
+ * Copyright 2023 PeerGum
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http:www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+h1, h2, h3 {
+    font-family: "Jura", "Permanent Marker", Serif;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: bold;
+    /*border-bottom: 1px solid #0040a0;*/
+}
+
+body {
+    font-family: "Jura";
+    font-size: 14px;
+}
+
+table {
+    /*border: 1px inset black;*/
+    /*box-shadow: 1px 1px 5px gray;*/
+}
+
+th {
+    font-family: "Special Elite", cursive;
+    border-bottom: 1px black solid;
+    padding: 5px;
+}
+
+/*table.peers, table.services, table.info, table.team {*/
+/*    border-collapse: collapse;*/
+/*    !*border: solid 2px black;*!*/
+
+/*    & td, & th {*/
+/*        padding: 5px 10px;*/
+/*        border: dotted 1px grey;*/
+/*        border-bottom: solid 1px black;*/
+
+/*        &.counter {*/
+/*            width: 50px;*/
+/*        }*/
+
+/*    }*/
+/*}*/
+
+/*table.peers td, table.peers th, table.services td, table.services th {*/
+/*    !*font-family: monospace;*!*/
+/*    padding: 5px 10px;*/
+/*    border: dotted 1px grey;*/
+/*}*/
+
+/*table.peers th, table.services th {*/
+/*        border-bottom: solid 1px black;*/
+/*}*/
+
+/*table.peers td.counter, table.services td.counter {*/
+/*    width: 50px;*/
+/*}*/
+
+.left {
+    text-align: left;
+}
+
+.center {
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}
+
+
+.bg-1 {
+    background-color: #eee;
+}
+
+h2 {
+    margin-top: 10px;
+}
+
+.border-top {
+    border-top: 1px solid #ccc;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #ccc;
+}
+
+.float-left {
+    float: left;
+}
+
+/*.main-panel {*/
+/*    .btn-link {*/
+/*        cursor: pointer;*/
+/*    }*/
+/*}*/
+
+/* messaging */
+
+/*.mail {*/
+/*    padding: 0;*/
+/*    margin: 0;*/
+/*}*/
+
+/*.mailboxes {*/
+/*    padding: 0;*/
+/*!*margin: 0;*!*/
+/*    font-size: 14px;*/
+/*    border: none;*/
+/*! border-right: 1 px solid grey;*!*/
+/*!* padding-top: 30 px;*!*/
+/*    background-color: #fafafa;*/
+
+/*    .column-top {*/
+/*        height: 50px;*/
+/*    !* background-color: white;*!*/
+/*        border: none;*/
+/*    }*/
+
+/*    div {*/
+/*        margin-top: -2px;*/
+/*        padding: 0;*/
+/*    !* border: 1 px solid black;*!*/
+
+/*        .mailbox {*/
+/*            margin: 2px 5px;*/
+/*            cursor: pointer;*/
+/*            text-align: center;*/
+/*            padding: 5px;*/
+/*            border-radius: 5px;*/
+/*            border: none;*/
+
+/*            &.selected {*/
+/*                font-weight: bold;*/
+/*            !* border: 1 px inset grey;*!*/
+/*                background-color: #e0e0e0;*/
+/*            }*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*.mails {*/
+/*!* margin: 0 10 px;*!*/
+/*    padding: 0;*/
+/*    height: 80vh;*/
+
+/*    .box-name {*/
+/*        height: 50px;*/
+/*        border-bottom: 1px solid white;*/
+/*        background-color: #fafafa;*/
+/*        padding: 10px;*/
+/*        font-weight: bold;*/
+/*    }*/
+
+/*    .mail-list {*/
+/*        height: 600px;*/
+/*        overflow-y: scroll;*/
+
+/*        .mail-summary {*/
+/*            &:hover {*/
+/*                background-color: #f7f7f7;*/
+/*            }*/
+
+/*            &.selected {*/
+/*                background-color: #0040a0;*/
+/*                color: white;*/
+/*            }*/
+
+/*            cursor: pointer;*/
+/*        !* margin: 1 px;*!*/
+/*            padding: 10px;*/
+/*            margin: 0;*/
+/*        !* border-top: 1 px solid grey;*!*/
+/*            border-bottom: 1px dotted lightgrey;*/
+/*            border-radius: 5px;*/
+
+/*            .mail-from {*/
+/*                text-align: left;*/
+/*                font-size: 13px;*/
+/*            }*/
+
+/*            .mail-from {*/
+/*                float: left;*/
+/*                font-weight: bold;*/
+/*            }*/
+
+/*            .mail-date {*/
+/*                text-align: right;*/
+/*                float: right;*/
+/*                font-size: 13px;*/
+/*                line-height: 16px;*/
+/*                color: lightgrey;*/
+/*            }*/
+
+/*            .mail-subject {*/
+/*                font-weight: bold;*/
+/*                font-size: 13px;*/
+/*            !* color: darkblue;*!*/
+/*                clear: left;*/
+/*            }*/
+
+/*            &.selected {*/
+/*            !* border: 1 px inset grey;*!*/
+/*            }*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*.mail-content {*/
+/*    padding: 0;*/
+/*!* height: 100 vh;*!*/
+
+/*    .message-toolbox {*/
+/*        height: 50px;*/
+/*        background-color: #fafafa;*/
+/*        border-bottom: 1px solid white;*/
+/*        font-size: 12px;*/
+
+/*        li {*/
+/*            border-radius: 5px;*/
+/*            margin: 5px;*/
+/*            padding: 5px;*/
+/*            color: #0040a0;*/
+
+/*            &.button {*/
+/*                cursor: pointer;*/
+/*            }*/
+
+/*            &:hover {*/
+/*                background-color: #0040a0;*/
+/*                color: white;*/
+/*            }*/
+
+/*            &.spacer {*/
+/*                background-color: transparent;*/
+/*                border: none;*/
+/*            }*/
+
+/*            i {*/
+/*                font-size: 18px;*/
+/*            }*/
+/*        }*/
+/*    }*/
+
+/*    .message {*/
+/*        padding: 5px 5px 0 20px;*/
+/*        border-left: 1px solid grey;*/
+/*        height: 100vh;*/
+
+/*        .mail-header {*/
+
+/*            border-bottom: 1px dotted lightgrey;*/
+/*            padding-bottom: 10px;*/
+
+/*            .mail-from {*/
+/*                float: left;*/
+/*                font-weight: bold;*/
+/*                font-size: 16px;*/
+/*            }*/
+
+/*            .mail-date {*/
+/*                float: right;*/
+/*                text-align: right;*/
+/*                line-height: 16px;*/
+/*                color: grey;*/
+/*            }*/
+
+/*            .mail-subject {*/
+/*                clear: left;*/
+/*                font-size: 14px;*/
+/*            }*/
+
+/*            .mail-to {*/
+
+/*            }*/
+/*        }*/
+
+/*        .mail-body {*/
+/*            padding-top: 10px;*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*.navbar {*/
+/*    background-color: #0040a0;*/
+/*    padding: 0 15px;*/
+
+/*    &.navbar-dark .nav-link {*/
+/*        cursor: pointer;*/
+
+/*        &:hover {*/
+/*            border-radius: 10px;*/
+/*            background-color: white;*/
+/*            color: #0040a0;*/
+/*        }*/
+/*    }*/
+
+/*    .navbar-brand {*/
+/*        img {*/
+/*            height: 50px;*/
+/*            width: auto;*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*.action-box {*/
+/*!* width: 15 %;*!*/
+/*    margin: 20px;*/
+/*    padding: 5px;*/
+/*    border: 1px solid lightgrey;*/
+/*!* min-height: 100 vh;*!*/
+
+/*    select {*/
+/*        width: 100%;*/
+
+/*        &.games {*/
+/*            size: 5px;*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*.move-list {*/
+/*!* width: 15 %;*!*/
+/*    margin: 20px;*/
+/*    padding: 5px;*/
+/*    border: 1px solid lightgrey;*/
+/*!* min-height: 100 vh;*!*/
+
+/*    ul {*/
+/*        list-style: decimal;*/
+/*        font-family: 'Special Elite';*/
+/*        color: #0040a0;*/
+
+/*        li {*/
+/*            div.color {*/
+/*                float: right;*/
+/*            }*/
+
+/*            &:hover {*/
+/*                color: red;*/
+/*                background-color: orange;*/
+/*            }*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*.checkers, .chess {*/
+/*    margin-top: 20px;*/
+/*    background: url('images/leather.png') repeat;*/
+/*!* background-size: 120 px 120 px;*!*/
+
+/*    .h-board-side {*/
+/*        height: 30px;*/
+/*        font-family: 'Open Sans', sans-serif;*/
+/*    !* font-weight: 700;*!*/
+/*    !* font-size: 18 px;*!*/
+/*    !* border-left: 1 px solid white;*!*/
+/*    !* border-right: 1 px solid white;*!*/
+/*        color: lightgoldenrodyellow;*/
+/*        text-shadow: black 0 0 3px;*/
+
+/*        &.upside-down-text {*/
+/*            transform: rotate(180deg);*/
+/*        }*/
+/*    }*/
+
+/*    .v-board-side {*/
+/*        width: 30px;*/
+/*        font-family: 'Open Sans', sans-serif;*/
+/*    !* font-weight: 700;*!*/
+/*    !* font-size: 16 px;*!*/
+/*    !* border-top: 1 px solid white;*!*/
+/*    !* border-bottom: 1 px solid white;*!*/
+/*        color: lightgoldenrodyellow;*/
+/*        text-shadow: black 0 0 3px;*/
+
+/*        &.upside-down-text {*/
+/*            transform: rotate(180deg);*/
+/*        }*/
+/*    }*/
+
+/*    td {*/
+/*        padding: 0;*/
+/*        margin: 0;*/
+/*    !* width: 60 px;*!*/
+/*    !* height: 60 px;*!*/
+/*        vertical-align: middle;*/
+/*        text-align: center;*/
+
+/*        &.dark {*/
+/*            background: url('images/dark-wood.png') center center;*/
+/*        }*/
+
+/*        &.light {*/
+/*            background: url('images/light-wood.png') center center;*/
+/*        }*/
+
+/*        &.targetable {*/
+/*            background: orange;*/
+/*        }*/
+
+/*        &.piece-to-move {*/
+/*            background: yellow;*/
+/*        }*/
+
+/*        &.piece-moved {*/
+/*            background: orange;*/
+/*        }*/
+
+/*        img {*/
+/*            width: 60px;*/
+/*        !* height: 60 px;*!*/
+/*        }*/
+
+/*        div.moves {*/
+/*            font-size: 20px;*/
+/*            font-weight: bold;*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*div.about {*/
+/*    div {*/
+/*        img {*/
+/*            max-width: 100%;*/
+/*            border: solid 1px grey;*/
+/*            box-shadow: 5px 5px 10px;*/
+/*        }*/
+
+/*        p {*/
+/*            text-align: justify;*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*.team {*/
+/*    box-shadow: none;*/
+/*    border: solid 1px grey;*/
+/*    border-left: none;*/
+/*    border-right: none;*/
+
+/*    width: 80%;*/
+
+/*    tr {*/
+/*        border-bottom: dotted 1px grey;*/
+
+/*        td {*/
+/*            padding: 5px 10px;*/
+/*        }*/
+
+/*        td:first-of-type {*/
+/*            width: 30%;*/
+/*            font-weight: bold;*/
+/*            font-family: "Special Elite", cursive;*/
+/*        }*/
+
+/*        td:last-of-type {*/
+/*            font-family: "Jura", cursive;*/
+/*        }*/
+
+/*    }*/
+/*}*/

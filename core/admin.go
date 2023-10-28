@@ -39,9 +39,11 @@ func adminServer() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Get("/", serverHandler)
-	r.Get("/js/*", http.StripPrefix("/js/", http.FileServer(http.Dir("core/admin/dist/js"))).ServeHTTP)
-	r.Get("/css/*", http.StripPrefix("/css/", http.FileServer(http.Dir("core/admin/dist/css"))).ServeHTTP)
+	r.Get("/*", serverHandler)
+	r.Get("/assets/*", http.StripPrefix("/assets/", http.FileServer(http.Dir("core/admin/dist/assets"))).ServeHTTP)
+	//r.Get("/images/*", http.FileServer(http.Dir("core/admin/dist/images")).ServeHTTP)
+	//r.Get("/js/*", http.StripPrefix("/js/", http.FileServer(http.Dir("core/admin/dist/js"))).ServeHTTP)
+	//r.Get("/css/*", http.StripPrefix("/css/", http.FileServer(http.Dir("core/admin/dist/css"))).ServeHTTP)
 	r.Get("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("core/admin/dist/images"))).ServeHTTP)
 	r.Get("/api/{apiName}", apiHandler)
 	r.Get("/services/{serviceId}", serviceHandler)
@@ -121,6 +123,17 @@ func apiHandler(w http.ResponseWriter, req *http.Request) {
 	case "services":
 		Logln("Services requested")
 		err := SendJson(w, directory.services)
+		if err != nil {
+			err := SendPage(w, "errors/500.html")
+			if err != nil {
+				w.WriteHeader(500)
+				w.Write([]byte(err.Error()))
+				Logln("Page Error: ", err)
+			}
+		}
+	case "info":
+		Logln("Info requested")
+		err := SendJson(w, PeerZ)
 		if err != nil {
 			err := SendPage(w, "errors/500.html")
 			if err != nil {

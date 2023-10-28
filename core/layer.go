@@ -23,6 +23,8 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"runtime"
+	debug2 "runtime/debug"
 	"strings"
 	"testing"
 )
@@ -61,6 +63,22 @@ var (
 	signalChannel = make(chan os.Signal, 1)
 )
 
+type Info struct {
+	Name     string `json:"name"`
+	Version  string `json:"version"`
+	Go       string `json:"go"`
+	OS       string `json:"os"`
+	Arch     string `json:"arch"`
+	NumCPU   int    `json:"num_cpu"`
+	Alloc    uint64 `json:"alloc"`
+	Mallocs  uint64 `json:"mallocs"`
+	Frees    uint64 `json:"frees"`
+	Revision string `json:"revision"`
+	Time     string `json:"time"`
+}
+
+var PeerZ Info
+
 //
 // --- Initialization
 //
@@ -78,6 +96,32 @@ func signalHandler() {
 }
 
 func init() {
+	var memStats runtime.MemStats
+
+	PeerZ.OS = runtime.GOOS
+	PeerZ.Arch = runtime.GOARCH
+	PeerZ.NumCPU = runtime.NumCPU()
+	runtime.ReadMemStats(&memStats)
+	PeerZ.Alloc = memStats.Alloc
+	PeerZ.Mallocs = memStats.Mallocs
+	PeerZ.Frees = memStats.Frees
+	PeerZ.Go = runtime.Version()
+	if buildInfo, ok := debug2.ReadBuildInfo(); ok {
+		PeerZ.Name = buildInfo.Path
+		PeerZ.Version = buildInfo.Main.Version
+		for _, setting := range buildInfo.Settings {
+			key := setting.Key
+			value := setting.Value
+			switch key {
+			case "vcs.revision":
+				PeerZ.Revision = value
+			case "vcs.time":
+				PeerZ.Time = value
+			default:
+			}
+		}
+	}
+
 	func() {
 		testing.Init()
 	}()

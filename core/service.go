@@ -17,62 +17,64 @@
 package core
 
 import (
-    "crypto/rsa"
-    "github.com/go-chi/chi"
+	"crypto/rsa"
+	"github.com/go-chi/chi"
 )
 
 const (
-    SERVICE_NEW = 1 << iota
-    SERVICE_RENAMED
-    SERVICE_UPDATED
-    SERVICE_ABANDONED
+	SERVICE_NEW = 1 << iota
+	SERVICE_RENAMED
+	SERVICE_UPDATED
+	SERVICE_ABANDONED
 )
 
 const (
-    SVC_VERSION = 0x0100
+	SVC_VERSION = 0x0100
 )
 
 type ServiceStarter interface {
-    StartService()
+	StartService()
 }
 
 type serviceManager interface {
-    ServiceStarter
+	ServiceStarter
 }
 
 type ApiDefinition struct {
-    path    string
-    router func(router chi.Router)
+	path   string
+	router func(router chi.Router)
 }
 
 type ServiceInfo struct {
-    Id          int64  `json:"id"`
-    Version     uint16 `json:"version"`
-    Name        string `json:"name"`
-    Description string `json:"description"`
-    Port        int    `json:"port"`
-    address     Address
-    flags       uint32
+	Id          int64  `json:"id"`
+	Version     uint16 `json:"version"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Path        string `json:"path",nullable`
+	Port        int    `json:"port"`
+	Component   string `json:"component"`
+	address     Address
+	flags       uint32
 }
 
 type Service struct {
-    Info ServiceInfo `json:"info"`
-    serviceManager
-    api  ApiDefinition
-    init func()
-    key  rsa.PrivateKey
+	Info ServiceInfo `json:"info"`
+	serviceManager
+	api  ApiDefinition
+	init func()
+	key  rsa.PrivateKey
 }
 
 func (service Service) StartService() {
-    Loglnf("Starting service %s", service.Info.Name)
-    serviceHandlers.AddHandler(service.api)
-    if service.init != nil {
-        service.init()
-    }
+	Loglnf("Starting service %s", service.Info.Name)
+	serviceHandlers.AddHandler(service.api)
+	if service.init != nil {
+		service.init()
+	}
 }
 
 type Directory struct {
-    services []Service
+	services []Service
 }
 
 //func (service Service) Info() (info ServiceInfo) {

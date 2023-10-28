@@ -17,12 +17,13 @@
 package core
 
 var chessService = Service{
-    Info: ServiceInfo{
-        Name:        "Chess",
-        Id:          chessServiceID,
-        Version:     0x0100, // version 1.00
-        address:     chessServiceAddress,
-        Description: "A basic chess game",
-        flags:       0,
-    },
+	Info: ServiceInfo{
+		Name:        "Chess",
+		Path:        "/chess",
+		Id:          chessServiceID,
+		Version:     0x0100, // version 1.00
+		address:     chessServiceAddress,
+		Description: "A basic chess game",
+		flags:       0,
+	},
 }

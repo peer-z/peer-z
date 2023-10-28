@@ -1,11 +1,35 @@
-# Admin template
+# peer-z
 
-## Notes
+This template should help get you started developing with Vue 3 in Vite.
 
-The admin template comes pre-compiled, so you don't have to do anything after building and installing the go executable.
-You'll have to update the `dist` folder if you make any changes to the files in `src`
+## Recommended IDE Setup
 
-## How to compile the admin template
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-run `npm install` in the `admin` folder, followed by `npm run build`.
-If you need to test your changes, run `npm run watch` instead and the changes will be applied immediately.
+## Customize configuration
+
+See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+## Project Setup
+
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+```sh
+npm run test:unit
+```
