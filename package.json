@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "postcss-nesting": "^12.0.1"
+  },
+  "dependencies": {
+    "vuedraggable": "^4.1.0"
   }
 }
