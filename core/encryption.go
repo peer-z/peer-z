@@ -36,7 +36,7 @@ var privKey *rsa.PrivateKey
 type Key interface{}
 
 func genKey() (key *rsa.PrivateKey, err error) {
-    if key, err = rsa.GenerateKey(rand.Reader, 1024); err == nil {
+    if key, err = rsa.GenerateKey(rand.Reader, 2048); err == nil {
         //if pemBlock,err := pem x509.EncryptPEMBlock(rand.Reader,"RSA PRIVATE KEY",x509.MarshalPKCS1PrivateKey(key),[]byte{},x509.PEMCipherDES); err == nil {
         if keyFile, err := os.Create(*keyPath); err == nil {
             writer := bufio.NewWriter(keyFile)
